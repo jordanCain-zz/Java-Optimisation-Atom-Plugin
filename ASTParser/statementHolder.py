@@ -1,10 +1,11 @@
 from methodHolder import Method
 
 class Statement:
-    def __init__(self, name, parent):
+    def __init__(self, name, parent, lineNo):
         self.name = name
         self.parent = parent
         self.parameters = []
+        self.lineNo = lineNo
 
     def getName(self):
         return self.name

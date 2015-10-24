@@ -1,10 +1,12 @@
 from packageHolder import Package
 
 class Class:
-    def __init__(self, name, parent):
+    #SOURCE:: http://stackoverflow.com/questions/2164258/multiple-constructors-in-python
+    def __init__(self, name, parent, scope="public", lineNo=0):
         self.name = name
         self.parent = parent
         self.children = []
+        self.lineNo = lineNo
 
     def getName(self):
         return self.name

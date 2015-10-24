@@ -5,6 +5,12 @@ ehthumbs.db
 # Folder config file
 Desktop.ini
 
+#Files to be read in by the system
+*.java
+
+#Generated Python files
+__pycache__/
+
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 

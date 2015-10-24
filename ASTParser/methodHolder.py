@@ -1,12 +1,14 @@
 from classHolder import Class
 
 class Method:
-    def __init__(self, name, parent, returnType):
+    def __init__(self, name, parent, scope, returnType, lineNo):
         self.name = name
         self.parent = parent
         self.children = []
         self.parameters = []
+        self.scope = scope
         self.returnType = returnType
+        self.lineNo = lineNo
 
     def getName(self):
         return self.name
