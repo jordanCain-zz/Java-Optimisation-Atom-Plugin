@@ -5,6 +5,7 @@ class Class:
     def __init__(self, name, parent, scope="public", lineNo=0):
         self.name = name
         self.parent = parent
+        self.variables = []
         self.children = []
         self.lineNo = lineNo
 
@@ -16,6 +17,9 @@ class Class:
 
     def addChild(self, child):
         self.children.extend(child)
+
+    def addVariable(self, variable):
+        self.variables.extend(variable)
 
     def toString(self):
         print ("I'm a class")

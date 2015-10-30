@@ -49,9 +49,12 @@ def analyseLine(line, parent):
     if "package" in line[0:7]:
         parent = packageFound(line)
         return parent
+    elif "import" in line[0:6]:
+        importFound(line, parent)
     elif "class" in line:
         parent = classFound(line, parent)
         return parent
+    #TODO:: This method detection will not work, it will detect class attributes as methods
     elif ("public" in line) or ("private" in line):
         methodFound(line)
     return parent
@@ -61,6 +64,10 @@ def packageFound(line):
     print ("found package: " + line[8:-2])
     newPackage = Package(line[8:-2])
     return newPackage
+
+def importFond(line, parent):
+    print ("found import: " + line[7:-1])
+    parent.addImport(line[7:-1])
 
 #Function called when a new class is found
 def classFound(line, parent):
@@ -74,26 +81,6 @@ def classFound(line, parent):
 def methodFound(line):
     print ("found method: " + line)
     endIndex = line.index('(')
-
-#SOURCE:: http://stackoverflow.com/questions/60208/replacements-for-switch-statement-in-python/323259#323259
-def decision(word, currentCharPosition):
-    return {
-        'package': foundPackage("Get the package name here"),
-        #TODO:: Class usually preceeded by public/ private
-        #Must find way to get around this
-        'class': foundClass("Get the class name here"),
-        'public': foundMethod("Get the method name here and set scope public"),
-        'private': foundMethod("Get the method name here and set scope private"),
-    }.get(word, foundStatement("get statement and any params"))
-
-def foundPackage(name):
-    print ("found new package")
-
-def foundClass(name):
-    print ("Found new class")
-
-def foundMethod(name):
-    print ("Found new method")
 
 ################################################################################
 #Start code
