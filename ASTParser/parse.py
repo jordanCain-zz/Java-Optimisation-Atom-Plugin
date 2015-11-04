@@ -56,7 +56,8 @@ def analyseLine(line, parent):
         return parent
     #TODO:: This method detection will not work, it will detect class attributes as methods
     elif ("public" in line) or ("private" in line):
-        methodFound(line)
+        parent = methodFound(line, parent)
+        return parent
     return parent
 
 #Function called when a new package is found
@@ -81,6 +82,13 @@ def classFound(line, parent):
 def methodFound(line):
     print ("found method: " + line)
     endIndex = line.index('(')
+    startIndex = endIndex
+    while (line[startIndex] != ' '):
+        print (line[startIndex])
+        startIndex -= 1
+    newMethod = Method(line[startIndex:endIndex], parent)
+    return newMethod
+
 
 ################################################################################
 #Start code

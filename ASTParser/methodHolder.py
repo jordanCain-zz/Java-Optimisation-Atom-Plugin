@@ -1,7 +1,7 @@
 from classHolder import Class
 
 class Method:
-    def __init__(self, name, parent, scope, returnType, lineNo):
+    def __init__(self, name, parent, scope = "public", returnType = "void", lineNo = 0):
         self.name = name
         self.parent = parent
         self.children = []
