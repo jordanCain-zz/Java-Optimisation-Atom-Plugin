@@ -17,10 +17,23 @@ class Method:
         return self.parent
 
     def addChild(self, child):
-        self.children.extend(child)
+        self.children.append(child)
 
     def addParameter(self, parameter):
-        self.parameters.extend(parameter)
+        self.parameters.append(parameter)
+
+    def printNode(self):
+        #Method name
+        #print (self.name, "(", end="")
+        output = self.name + "("
+        #Method params
+        for param in self.parameters:
+            output = output + param + ','
+        print (output[0:-1], ") {")
+        #Statements inside of method
+        for currentStatement in self.children:
+            currentStatement.printNode()
+        print ("}")
 
     def toString(self):
         print ("I'm a method")

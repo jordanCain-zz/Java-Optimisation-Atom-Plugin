@@ -18,10 +18,16 @@ class Class:
         return self.parent
 
     def addChild(self, child):
-        self.children.extend(child)
+        self.children.append(child)
 
     def addVariable(self, variable):
-        self.variables.extend(variable)
+        self.variables.append(variable)
+
+    def printNode(self):
+        print (self.name)
+        for currentMethod in self.children:
+            currentMethod.printNode()
+        print ("}")
 
     def toString(self):
         print ("I'm a class")

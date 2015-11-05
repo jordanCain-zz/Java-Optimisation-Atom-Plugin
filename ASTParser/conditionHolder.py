@@ -1,11 +1,11 @@
 from statementHolder import Statement
 
-#loop inherits statement
-class Loop(Statement):
-    #Loop has a special attribute, looptype(For, while, do)
-    def __init__(self, name, parent, loopType, lineNo = 0):
+#Condition inheites statement
+class Condition(Statement):
+    #Condtions can be if, switch...
+    def __init__(self, name, parent, conditionType, lineNo = 0):
         Statement.__init__(self, name, parent, lineNo)
-        self.loopType = loopType
+        self.conditionType = conditionType
         self.children = []
 
     def addChild(self, child):

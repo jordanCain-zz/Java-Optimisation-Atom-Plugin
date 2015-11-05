@@ -6,7 +6,8 @@ ehthumbs.db
 Desktop.ini
 
 #Generated Python files
-__pycache__/
+/ASTParser/__pycache__/
+*.pyc
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
