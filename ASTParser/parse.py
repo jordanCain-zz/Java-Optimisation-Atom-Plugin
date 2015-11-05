@@ -4,6 +4,7 @@ from methodHolder import Method
 from statementHolder import Statement
 from conditionHolder import Condition
 from loopHolder import Loop
+import re
 
 #Function to read in the contents of a file line by line and load into a list
 #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
@@ -28,15 +29,15 @@ def analyseFile(content):
 #SOURCE:: http://www.tutorialspoint.com/python/python_if_else.htm ---elif
 #SOURCE:: https://docs.python.org/2/tutorial/introduction.html#strings ---for slicing strings
 def analyseLine(line, parent):
-    #List with all basic return types for checking a method decleration
-    returnTypes = ["void", "boolean", "String", "char", "byte", "short", "int", "long", "float", "double"]
-    #TODO:: covert decision branch to use regex
-    if "package" in line[0:7]:
+    #SOURCE:: https://docs.python.org/2/library/re.html
+    if re.search("(package)\s.+(;)", line):
+        #regex: package, whitespace, one or more chars, finally semi-colon
         parent = packageFound(line)
         return parent
-    elif "import" in line[0:6]:
+    elif re.search("(import)\s\w+.*(;)", line):
         importFound(line, parent)
-    elif "class" in line:
+    elif re.search("\w+\s(class)\s\w+\s(\{)", line):
+        #regex: one or more words, whitespace, "class", whitespace, one or more words, {
         parent = classFound(line, parent)
         return parent
     elif ("public" in line) or ("private" in line):
