@@ -28,8 +28,10 @@ def analyseFile(content):
 #SOURCE:: https://docs.python.org/2/tutorial/controlflow.html
 #SOURCE:: http://www.tutorialspoint.com/python/python_if_else.htm ---elif
 #SOURCE:: https://docs.python.org/2/tutorial/introduction.html#strings ---for slicing strings
+#SOURCE:: https://docs.python.org/2/library/re.html ---regex
+#SOuRCE:: http://www.regexr.com/ ---more regex
+#SOURCE:: http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python ---empty line
 def analyseLine(line, parent):
-    #SOURCE:: https://docs.python.org/2/library/re.html
     if re.search("(package)\s.+(;)", line):
         #regex: package, whitespace, one or more chars, finally semi-colon
         parent = packageFound(line)
@@ -40,12 +42,13 @@ def analyseLine(line, parent):
         #regex: one or more words, whitespace, "class", whitespace, one or more words, {
         parent = classFound(line, parent)
         return parent
-    elif ("public" in line) or ("private" in line):
-        #TODO:: This method detection will not work, it will detect class attributes as methods
+    elif re.search("(public)|(private)\s.*(\().*(\))", line):
+        #regex: public or private, whitespace, any number of chars, "(", any number of chars, finally ")"
         parent = methodFound(line, parent)
         return parent
-    elif ("if" in line) or ("else" in line) or ("switch" in line):
-        #TODO:: Improve condition detection (check it's surrounded in parenthesis?)
+    #TODO:: elif for class attributes, (public)|(private), whitespace, word, ";"
+    elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-Za-z\-\=\&\|\!\^\>\<\[\]\s]+(\))|(else)", line):
+        #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
         parent = conditionFound(line, parent)
         return parent
     elif ("for" in line) and ("{" in line):
@@ -55,10 +58,8 @@ def analyseLine(line, parent):
         return parent
     elif ("}" in line) and (not "{" in line):
         # '}' denotes we have left a block and need to go up a parent
-        #print ("moving up parent from: ", parent.getName(), " to: ", parent.getParent().getName())
         parent = parent.getParent()
     else:
-        #SOURCE:: http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python
         if line.isspace() == False:
             statementFound(line, parent)
     return parent
