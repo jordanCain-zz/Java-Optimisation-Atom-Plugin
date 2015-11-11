@@ -1,5 +1,6 @@
 from packageHolder import Package
 from classHolder import Class
+from classHolder import Attribute
 from methodHolder import Method
 from statementHolder import Statement
 from conditionHolder import Condition
@@ -21,7 +22,6 @@ def analyseFile(content):
     currentParent = Package("SuperParent")
     for i, line in enumerate(content):
         currentParent = analyseLine(line, currentParent)
-    print (currentParent.toString())
     return currentParent
 
 #Function called to analyse an individual line
@@ -42,10 +42,12 @@ def analyseLine(line, parent):
         #regex: one or more words, whitespace, "class", whitespace, one or more words, {
         parent = classFound(line, parent)
         return parent
-    elif re.search("(public)|(private)\s.*(\().*(\))", line):
+    elif re.search("((public)|(private))\s.*(\().*(\))", line):
         #regex: public or private, whitespace, any number of chars, "(", any number of chars, finally ")"
         parent = methodFound(line, parent)
         return parent
+    elif re.search("((private)|(public))\s((static)\s)?[a-zA-z]*\s[a-z0-9]+\s*((\;)|(\=.*\;))", line):
+        classAtributeFound(line, parent)
     #TODO:: elif for class attributes, (public)|(private), whitespace, word, ";"
     elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-Za-z\-\=\&\|\!\^\>\<\[\]\s]+(\))|(else)", line):
         #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
@@ -79,9 +81,36 @@ def importFound(line, parent):
 def classFound(line, parent):
     print ("found class: " + line)
     startIndex = (line.index("class") + 6)
-    newClass = Class(line[startIndex:-3], parent)
+    newClass = Class(line[startIndex:-3], parent, getScope(line))
     parent.addChild(newClass)
     return newClass
+
+#Function called when a class atribute is found
+#TODO:: Improve the detection of differnt elements by using split(' ')
+def classAtributeFound(line, parent):
+    print ("found classAtrribute: " + line)
+    scope = getScope(line)
+    if scope is "public":
+        startIndex = 9
+    elif scope is "private":
+        startIndex = 10
+    if re.search("\s(static)\s", line):
+        startIndex += 7
+    endIndex = startIndex
+    while (line[endIndex] != ' '):
+        endIndex += 1
+    dataType = line[startIndex:endIndex]
+    endIndex += 1
+    startIndex = endIndex
+    while ((line[endIndex] != ' ') and (line[endIndex] != ';') and (line[endIndex] != '=')):
+        endIndex += 1
+    name = line[startIndex:endIndex]
+    if '=' not in line:
+        print ("adding object")
+        newAttribute = Attribute(parent, name, scope, dataType)
+    else:
+        newAttribute = Attribute(parent, name, scope, dataType, line[line.index('=')+2:-2])
+
 
 #Function called when a new method is found
 def methodFound(line, parent):
@@ -91,19 +120,11 @@ def methodFound(line, parent):
     startIndex = endIndex
     while (line[startIndex] != ' '):
         startIndex -= 1
-    newMethod = Method(line[startIndex:endIndex], parent)
-    getMethodParams(line, newMethod)
+    newMethod = Method(line[startIndex:endIndex], parent, getScope(line), isStatic(line))
+    newMethod.setParams(getParams(line))
+    newMethod.setType(getType(line, newMethod))
     parent.addChild(newMethod)
     return newMethod
-
-def getMethodParams(line, method):
-    startIndex = line.index('(')+1
-    endIndex = line.index(')')
-    line = line[startIndex:endIndex]
-    line = line.split(',')
-    for param in line:
-        print ("adding param: ", param)
-        method.addParameter(param)
 
 #Function called when a new statement is found
 def statementFound(line, parent):
@@ -125,6 +146,40 @@ def loopFound(line, parent):
     parent.addChild(newLoop)
     return newLoop
 
+#Function to determine whether a method is public or private and return it
+def getScope(line):
+    #regex is slow, so use "in"
+    #SOURCE:: http://stackoverflow.com/questions/4901523/whats-a-faster-operation-re-match-search-or-str-find
+    if "public" in line:
+        return "public"
+    elif "private" in line:
+        return "private"
+    return "NULL"
+
+#Function to determine whether a class attribute/method is static
+def isStatic(line):
+    if "static" in line:
+        return True
+    return False
+
+#Function to get the return type of a method
+def getType(line, newMethod):
+    endIndex = line.index(newMethod.getName())
+    startIndex = endIndex - 1
+    while (line[startIndex] != ' '):
+        startIndex -= 1
+    return line[startIndex:endIndex]
+
+def getParams(line):
+    startIndex = line.index('(')+1
+    endIndex = line.index(')')
+    line = line[startIndex:endIndex]
+    line = line.split(',')
+    parameters = []
+    for param in line:
+        parameters.append(param)
+    return parameters
+
 #Function to print a simple tree to console
 def printTree(parent):
     print ("Start node: ", parent.getName())
@@ -136,4 +191,4 @@ def printTree(parent):
 #Start code
 fileContents = readFile()
 parent = analyseFile(fileContents)
-printTree(parent)
+#printTree(parent)

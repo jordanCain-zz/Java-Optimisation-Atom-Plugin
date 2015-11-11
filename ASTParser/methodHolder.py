@@ -1,12 +1,13 @@
 from classHolder import Class
 
 class Method:
-    def __init__(self, name, parent, scope = "public", returnType = "void", lineNo = 0):
+    def __init__(self, name, parent, scope, static, returnType = "void", lineNo = 0):
         self.name = name
         self.parent = parent
         self.children = []
         self.parameters = []
         self.scope = scope
+        self.static = static
         self.returnType = returnType
         self.lineNo = lineNo
 
@@ -22,11 +23,17 @@ class Method:
     def addParameter(self, parameter):
         self.parameters.append(parameter)
 
+    def setType(self, returnType):
+        self.returnType = returnType
+
+    def setParams(self, parameters):
+        self.parameters = parameters
+
     def printNode(self):
-        #Method name
-        #print (self.name, "(", end="")
-        output = self.name + "("
-        #Method params
+        output = self.scope
+        if self.static:
+            output = output + " static"
+        output = output + self.returnType +self.name +'('
         for param in self.parameters:
             output = output + param + ','
         print (output[0:-1], ") {")

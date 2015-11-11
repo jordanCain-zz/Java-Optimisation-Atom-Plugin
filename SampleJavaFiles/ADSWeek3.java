@@ -4,6 +4,9 @@ import java.util.Scanner;
 
 public class ADSWeek3 {
 
+  public static TagNode parent = null;
+  private TagNode[] child;
+
     public static void main(String[] args) {
         // TODO code application logic here
         //PerformFactorial();
