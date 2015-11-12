@@ -87,6 +87,7 @@ def classFound(line, parent):
 
 #Function called when a class atribute is found
 #TODO:: Improve the detection of differnt elements by using split(' ')
+#TODO:: Ensure we can pick up static attributes
 def classAtributeFound(line, parent):
     print ("found classAtrribute: " + line)
     scope = getScope(line)

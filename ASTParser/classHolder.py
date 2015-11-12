@@ -45,5 +45,6 @@ class Attribute:
         return self.name
 
     #TODO:: Improve the print node function
+    #format the string, output the value if assigned
     def printNode(slef):
-        print (self.name + self.type)
+        print (self.scope + self.type + self.name)
