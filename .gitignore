@@ -5,6 +5,10 @@ ehthumbs.db
 # Folder config file
 Desktop.ini
 
+#Generated Python files
+/ASTParser/__pycache__/
+*.pyc
+
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
