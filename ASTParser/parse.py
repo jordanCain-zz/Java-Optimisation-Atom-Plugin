@@ -47,15 +47,14 @@ def analyseLine(line, parent):
         parent = methodFound(line, parent)
         return parent
     elif re.search("((private)|(public))\s((static)\s)?[a-zA-z]*\s[a-z0-9]+\s*((\;)|(\=.*\;))", line):
+        #regex: public or private, whitespace, possible static, word, whitespace,word,possible whitespace, semicolon or = plus chars semicolon
         classAtributeFound(line, parent)
-    #TODO:: elif for class attributes, (public)|(private), whitespace, word, ";"
     elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-Za-z\-\=\&\|\!\^\>\<\[\]\s]+(\))|(else)", line):
         #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
         parent = conditionFound(line, parent)
         return parent
     elif ("for" in line) and ("{" in line):
-        #TODO:: Improve loop detection (Check it's surrounded in parenthesis?)
-        #TODO:: Needs to detect while, do-while
+        re.search("((for)\s*(\().+(\)))|((while)\s*(\().*(\)))[^;]|(do)\s*", line)
         parent = loopFound(line, parent)
         return parent
     elif ("}" in line) and (not "{" in line):
@@ -107,7 +106,6 @@ def classAtributeFound(line, parent):
         endIndex += 1
     name = line[startIndex:endIndex]
     if '=' not in line:
-        print ("adding object")
         newAttribute = Attribute(parent, name, scope, dataType)
     else:
         newAttribute = Attribute(parent, name, scope, dataType, line[line.index('=')+2:-2])
