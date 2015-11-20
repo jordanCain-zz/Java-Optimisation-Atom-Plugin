@@ -2,7 +2,7 @@ from methodHolder import Method
 
 class Statement:
     def __init__(self, name, parent, lineNo = 0):
-        self.name = name
+        self.name = name.rstrip('\n')
         self.parent = parent
         self.lineNo = lineNo
 

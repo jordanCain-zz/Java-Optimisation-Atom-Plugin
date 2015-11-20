@@ -2,7 +2,7 @@ from classHolder import Class
 
 class Method:
     def __init__(self, name, parent, scope, static, returnType = "void", lineNo = 0):
-        self.name = name
+        self.name = name.rstrip('\n')
         self.parent = parent
         self.children = []
         self.parameters = []
@@ -13,6 +13,9 @@ class Method:
 
     def getName(self):
         return self.name
+
+    def getChildren(self):
+        return self.children
 
     def getParent(self):
         return self.parent

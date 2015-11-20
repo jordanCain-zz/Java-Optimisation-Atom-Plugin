@@ -2,9 +2,8 @@ from packageHolder import Package
 
 class Class:
     #SOURCE:: http://stackoverflow.com/questions/2164258/multiple-constructors-in-python
-    #TODO:: pass line number in
     def __init__(self, name, parent, scope, inheritance = "", lineNo=0):
-        self.name = name
+        self.name = name.rstrip('\n')
         self.parent = parent
         self.variables = []
         self.children = []
@@ -16,6 +15,9 @@ class Class:
 
     def getParent(self):
         return self.parent
+
+    def getChildren(self):
+        return self.children
 
     def addChild(self, child):
         self.children.append(child)

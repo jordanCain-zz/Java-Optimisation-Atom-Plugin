@@ -1,11 +1,14 @@
 class Package:
     def __init__(self, name):
-        self.name = name
+        self.name = name.rstrip('\n')
         self.children = []
         self.imports = []
 
     def getName(self):
         return self.name
+
+    def getChildren(self):
+        return self.children
 
     def addChild(self, child):
         self.children.append(child)
