@@ -9,52 +9,60 @@ import traceback
 from methodHolder import Method
 from classHolder import Class
 
-def scan():
-    debug = False
-    parent = parse.read(debug)
-    #print ("top level" + parent.getName())
+def stackTrace():
+    formatStackTrace(len(inspect.stack())-2)
+    print (inspect.stack()[1][3] + " ", end="")
+    formatStackTrace(len(inspect.stack())-2)
+    print (" " + inspect.stack()[1][1] + " : " + str(inspect.stack()[1][2]-2))
+
+def formatStackTrace(count):
+    while count > 0:
+        print("  ", end="")
+        count -= 1
+
+def detect(parent, debug):
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
+        print ("Detecting Optimisations")
     recursionDetect(parent, debug)
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console
 def recursionDetect(parent, debug):
-    if debug:
-        #Stack trace experimentation
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print ("Caller name: ", calframe[1][3])
-        #######################################
-        print ("Stack trace: ")
-        for line in traceback.format_stack():
-            print("\t" + line.strip())
-        #End of stack trace experimentation
-        print ("Recursion Detection")
+    if debug >= 2:
+        stackTrace()
     #Get all the methods in the tree
     methods = getMethods(parent, debug)
     for method in methods:
         #For each method we need to analyse the statements inside it
         statements = method.getChildren()
         for statement in statements:
-            if debug :
+            if debug == 1:
                 print("\tstatement: " + statement.getName() + " #### parent: " + statement.getParent().getName())
             if method.getName() in statement.getName():
-                if True:#debug:
+                if debug == 1:
                     print ("found a possible recursion")
                     print (statement.getName() + "\tin method: " + method.getName())
                 #We now need to ensure the function call is to the method we're in
                 #It could be a function with the same name but different list of Params
-                params = parse.getParams(statement.getName())
+                #When comparing parameters we need to compare types not names!
+                params = parse.getParams(statement.getName(), debug)
                 print (params)
 
 #Function that will return a list of all classes in the tree
 #Params: parent is the highest level of the tree
 def getClasses(parent):
+    if debug >= 2:
+        stackTrace()
     parent.getChildren()
 
 #Function that will return a list of all methods in the tree
 #Params: parent is the highest level of the tree, debug will add extra output to console
 def getMethods(parent, debug):
-    if debug:
+    if debug >= 2:
+        stackTrace()
+    if debug == 1:
         print("getMethods")
     #get children of the package, get the class(s)
     classes = parent.getChildren()
@@ -62,7 +70,7 @@ def getMethods(parent, debug):
     for currentClass in classes:
         if type(currentClass) is Class:
             classMethods.append(currentClass.getChildren())
-        elif debug:
+        elif debug == 1:
             print ("\tfound not a class")
     #Calling get parent on the top level (the package) returns a list of objects which we append to a list
     #If we have multiple classes in a file we get a list with multiple lists(each list would be a class)
@@ -73,10 +81,8 @@ def getMethods(parent, debug):
         for method in classMethod:
             if type(method) is Method:
                 finalMethods.append(method)
-                if debug:
+                if debug == 1:
                     print ("\tFound a method: " + method.getName())
-            elif debug:
-                print ("\tFound not method")
+            elif debug == 1:
+                print ("\tFound not method" + method.getName())
     return finalMethods
-
-scan()
