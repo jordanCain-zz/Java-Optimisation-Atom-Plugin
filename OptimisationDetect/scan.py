@@ -41,14 +41,23 @@ def recursionDetect(parent, debug):
             if debug == 1:
                 print("\tstatement: " + statement.getName() + " #### parent: " + statement.getParent().getName())
             if method.getName() in statement.getName():
-                if debug == 1:
-                    print ("found a possible recursion")
+                if debug == 0:
+                    print ("found a possible recursion: ", end='')
                     print (statement.getName() + "\tin method: " + method.getName())
                 #We now need to ensure the function call is to the method we're in
                 #It could be a function with the same name but different list of Params
                 #When comparing parameters we need to compare types not names!
-                params = parse.getParams(statement.getName(), debug)
-                print (params)
+                statementName = statement.getName()
+                methodName = method.getName()
+                #Create a substring of the method call and parameters
+                statementName = statementName[statementName.index(methodName):]
+                statementName = statementName[:statementName.index(')')+1]
+
+                params = parse.getParams(statementName, debug)
+                if debug == 0:
+                    print ("calling get params: " + statementName)
+                    print ("statement params: " + str(params))
+                methodParamTypes = getMethodParamTypes(method, debug)
 
 #Function that will return a list of all classes in the tree
 #Params: parent is the highest level of the tree
@@ -71,7 +80,7 @@ def getMethods(parent, debug):
         if type(currentClass) is Class:
             classMethods.append(currentClass.getChildren())
         elif debug == 1:
-            print ("\tfound not a class")
+            print ("\tfound not a class" + currentClass.getName())
     #Calling get parent on the top level (the package) returns a list of objects which we append to a list
     #If we have multiple classes in a file we get a list with multiple lists(each list would be a class)
     #We need to filter out any objects that arent of type Method
@@ -86,3 +95,16 @@ def getMethods(parent, debug):
             elif debug == 1:
                 print ("\tFound not method" + method.getName())
     return finalMethods
+
+def getMethodParamTypes(method, debug):
+    params = method.getParams()
+    if debug == 0:
+        print ("method params: ", end='')
+        print (str(params))
+    paramTypes = []
+    for param in params:
+        #SOURCE:: http://stackoverflow.com/questions/959215/removing-starting-spaces-in-python
+        param = param.lstrip()
+        param = param.split(' ')
+        paramTypes.append(param[0])
+    return paramTypes

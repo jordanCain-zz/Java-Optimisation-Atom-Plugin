@@ -245,7 +245,7 @@ def getParams(line, debug):
     if debug == 1:
         print ("Get params: " + line)
     startIndex = line.index('(')+1
-    endIndex = line.index(')')
+    endIndex = line.rindex(')')
     line = line[startIndex:endIndex]
     line = line.split(',')
     parameters = []

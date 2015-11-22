@@ -32,6 +32,9 @@ class Method:
     def setParams(self, parameters):
         self.parameters = parameters
 
+    def getParams(self):
+        return self.parameters
+
     def printNode(self):
         output = self.scope
         if self.static:

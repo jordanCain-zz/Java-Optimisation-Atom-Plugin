@@ -21,12 +21,12 @@ public class ADSWeek3 {
         int factorial=RecursiveFactorial(value);// Calculate the factorial of value
         System.out.println("The factorial of "+value+" is "+factorial);
     }
-    private static int RecursiveFactorial(int value){
+    private static int RecursiveFactorial(int value, String test){
         int returnValue = 1;
         if(value <= 1){
             return 1;
         }
-        returnValue = (value * RecursiveFactorial(value-1));
+        returnValue = (value * RecursiveFactorial(value-1, test), test2);
         return returnValue;
     }
     private static int IterativeFactorial(int value){
