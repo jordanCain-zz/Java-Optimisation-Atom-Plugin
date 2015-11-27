@@ -1,3 +1,4 @@
+import re
 import sys
 #SOURCE:: http://stackoverflow.com/questions/4383571/importing-files-from-different-folder-in-python
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
@@ -53,11 +54,17 @@ def recursionDetect(parent, debug):
                 statementName = statementName[statementName.index(methodName):]
                 statementName = statementName[:statementName.index(')')+1]
 
+                params = method.getParams()
+                methodParamTypes = getMethodParamTypes(params, debug)
+
                 params = parse.getParams(statementName, debug)
+                statementParamTypes = getStatementParamTypes(params, debug)
+
                 if debug == 0:
-                    print ("calling get params: " + statementName)
-                    print ("statement params: " + str(params))
-                methodParamTypes = getMethodParamTypes(method, debug)
+                    print ("Method param types: " + str(methodParamTypes))
+                    print ("StatementName: " + statementName)
+                    print ("Statement params: " + str(params))
+
 
 #Function that will return a list of all classes in the tree
 #Params: parent is the highest level of the tree
@@ -96,10 +103,9 @@ def getMethods(parent, debug):
                 print ("\tFound not method" + method.getName())
     return finalMethods
 
-def getMethodParamTypes(method, debug):
-    params = method.getParams()
+def getMethodParamTypes(params, debug):
     if debug == 0:
-        print ("method params: ", end='')
+        print ("Method params: ", end='')
         print (str(params))
     paramTypes = []
     for param in params:
@@ -108,3 +114,35 @@ def getMethodParamTypes(method, debug):
         param = param.split(' ')
         paramTypes.append(param[0])
     return paramTypes
+
+def getStatementParamTypes(params, debug):
+    if debug == 0:
+        print ("Statement params: ", end='')
+        print (str(params))
+    paramTypes = []
+    for param in params:
+        #Check for literals?
+        if '(' in param and ')' in param:
+            print ("found a function call")
+            #walk the tree to find the return type
+        elif param.isdigit():
+            paramTypes.append('int')
+        elif re.match("\d+\.\d+(f)", param):
+            paramTypes.append('float')
+        elif '"' in param or "'" in param:
+            paramTypes.append('String')
+        elif param.isalpha():
+            #parameter is just a variable
+            print ("Just a variable")
+        else:
+            param = param.lstrip()
+            param = cleanParam(param, debug)
+    return 0
+
+def cleanParam(param, debug):
+    if debug == 0:
+        print ("Cleaning param: " + param)
+    if re.search("(-)|(\+)|(\*)|(\/)", param):
+        if debug == 0:
+            print("Param needs cleaning")
+    return param
