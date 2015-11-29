@@ -23,6 +23,7 @@ public class ADSWeek3 {
     }
     private static int RecursiveFactorial(int value, String test){
         int returnValue = 1;
+        String test = 10;
         if(value <= 1){
             return 1;
         }

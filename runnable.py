@@ -7,9 +7,10 @@ import scan
 import inspect
 
 #Debug levels:
-#1 User trace - produces extra logging info
-#2 Service Trace - Produces a stackTrace
-debugLevel = 0
+#0 Dev trace        - produces extra log info in areas being written
+#1 User trace       - produces extra logging info
+#2 Service Trace    - Produces a stackTrace
+debugLevel = 1
 
 def stackTrace():
     formatStackTrace(len(inspect.stack())-2)

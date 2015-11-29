@@ -49,4 +49,4 @@ class Method:
         print ("}")
 
     def toString(self):
-        print ("I'm a method")
+        print ("Method: " + self.name)

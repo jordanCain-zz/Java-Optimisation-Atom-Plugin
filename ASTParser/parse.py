@@ -184,6 +184,7 @@ def statementFound(line, parent, debug):
     parent.addChild(newStatement)
 
 #Function called when a new condition is found
+#Returns the condition object as a new parent
 def conditionFound(line, parent, debug):
     if debug >= 2:
         stackTrace()
@@ -194,6 +195,7 @@ def conditionFound(line, parent, debug):
     return newCondition
 
 #Function called when a new loop is found
+#Returns the loop object as a new parent
 def loopFound(line, parent, debug):
     if debug >= 2:
         stackTrace()

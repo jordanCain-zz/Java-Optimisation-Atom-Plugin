@@ -11,6 +11,9 @@ class Condition(Statement):
     def addChild(self, child):
         self.children.append(child)
 
+    def getChildren(self):
+        return self.children
+
     #Override
     def printNode(self):
         print (self.name)

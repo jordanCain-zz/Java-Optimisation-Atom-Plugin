@@ -2,7 +2,9 @@ import re
 import sys
 #SOURCE:: http://stackoverflow.com/questions/4383571/importing-files-from-different-folder-in-python
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
+sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTWalker')
 import parse
+import walker
 #SOURCE:: http://stackoverflow.com/questions/2654113/python-how-to-get-the-callers-method-name-in-the-called-method
 import inspect
 #SOURCE:: http://stackoverflow.com/questions/1156023/print-current-call-stack-from-a-method-in-python-code
@@ -34,9 +36,11 @@ def recursionDetect(parent, debug):
     if debug >= 2:
         stackTrace()
     #Get all the methods in the tree
-    methods = getMethods(parent, debug)
+    methods = walker.getMethods(parent, debug)
     for method in methods:
         #For each method we need to analyse the statements inside it
+        #TODO:: this get children also needs to check if the children have any children
+        #i.e a condition statement will have children
         statements = method.getChildren()
         for statement in statements:
             if debug == 1:
@@ -58,53 +62,19 @@ def recursionDetect(parent, debug):
                 methodParamTypes = getMethodParamTypes(params, debug)
 
                 params = parse.getParams(statementName, debug)
-                statementParamTypes = getStatementParamTypes(params, debug)
+                statementParamTypes = getStatementParamTypes(params, method, debug)
 
-                if debug == 0:
-                    print ("Method param types: " + str(methodParamTypes))
-                    print ("StatementName: " + statementName)
-                    print ("Statement params: " + str(params))
+                if statementParamTypes == methodParamTypes:
+                    print ("We found an actual recursion!!!!")
 
-
-#Function that will return a list of all classes in the tree
-#Params: parent is the highest level of the tree
-def getClasses(parent):
-    if debug >= 2:
-        stackTrace()
-    parent.getChildren()
-
-#Function that will return a list of all methods in the tree
-#Params: parent is the highest level of the tree, debug will add extra output to console
-def getMethods(parent, debug):
-    if debug >= 2:
-        stackTrace()
-    if debug == 1:
-        print("getMethods")
-    #get children of the package, get the class(s)
-    classes = parent.getChildren()
-    classMethods = []
-    for currentClass in classes:
-        if type(currentClass) is Class:
-            classMethods.append(currentClass.getChildren())
-        elif debug == 1:
-            print ("\tfound not a class" + currentClass.getName())
-    #Calling get parent on the top level (the package) returns a list of objects which we append to a list
-    #If we have multiple classes in a file we get a list with multiple lists(each list would be a class)
-    #We need to filter out any objects that arent of type Method
-    #SOURCE:: http://stackoverflow.com/questions/2225038/determine-the-type-of-an-object
-    finalMethods = []
-    for classMethod in classMethods:
-        for method in classMethod:
-            if type(method) is Method:
-                finalMethods.append(method)
                 if debug == 1:
-                    print ("\tFound a method: " + method.getName())
-            elif debug == 1:
-                print ("\tFound not method" + method.getName())
-    return finalMethods
+                    print ("Method param types: " + str(methodParamTypes))
+                    print ("Statement param types: " + str(statementParamTypes))
 
 def getMethodParamTypes(params, debug):
-    if debug == 0:
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
         print ("Method params: ", end='')
         print (str(params))
     paramTypes = []
@@ -115,8 +85,10 @@ def getMethodParamTypes(params, debug):
         paramTypes.append(param[0])
     return paramTypes
 
-def getStatementParamTypes(params, debug):
-    if debug == 0:
+def getStatementParamTypes(params, method, debug):
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
         print ("Statement params: ", end='')
         print (str(params))
     paramTypes = []
@@ -126,23 +98,98 @@ def getStatementParamTypes(params, debug):
             print ("found a function call")
             #walk the tree to find the return type
         elif param.isdigit():
-            paramTypes.append('int')
+            paramTypes.append("int")
         elif re.match("\d+\.\d+(f)", param):
-            paramTypes.append('float')
+            paramTypes.append("float")
         elif '"' in param or "'" in param:
-            paramTypes.append('String')
-        elif param.isalpha():
+            paramTypes.append("String")
+        elif param.lstrip().isalpha():
             #parameter is just a variable
-            print ("Just a variable")
+            #Find the type of the variable
+            paramTypes.append(findVariable(param.lstrip(), method, debug))
         else:
-            param = param.lstrip()
-            param = cleanParam(param, debug)
-    return 0
+            paramTypes.append(cleanParam(param.lstrip(), debug))
+        if debug == 1:
+            print ("ParamTypes: " + str(paramTypes))
+    return paramTypes
 
 def cleanParam(param, debug):
-    if debug == 0:
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
         print ("Cleaning param: " + param)
-    if re.search("(-)|(\+)|(\*)|(\/)", param):
-        if debug == 0:
-            print("Param needs cleaning")
+    #Lets check if param is a number
+    if '-' in param:
+        operatorIndex = param.index('-')
+    elif '+' in param:
+        operatorIndex = param.index('+')
+    elif '/' in param:
+        operatorIndex = param.index('/')
+    elif '*' in param:
+        operatorIndex = param.index('*')
+
+    left = param[:operatorIndex]
+    right = param[operatorIndex+1:]
+    param = getType(left, right, debug)
+
+    if debug == 1:
+        print ("left of op: " + left + " right of op: " + right)
+    print ("Returning: " + param)
     return param
+
+def getType(left, right, debug):
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
+        print ("Get type: left: " + left + " right: " + right)
+    if left.isdigit() or right.isdigit():
+        if debug == 1:
+            print ("Returning int")
+        return "int"
+    if re.match("\d+\.\d+(f)", left) or re.match("\d+\.\d+(f)", right):
+        if debug == 1:
+            print ("Returning float")
+        return "float"
+
+def findVariable(variable, method, debug):
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
+        print ("Find Variable: " + variable)
+    #Get a list of all statements in the class to check variable against
+    statements = walker.getStatements(method, debug)
+    for statement in statements:
+        if '=' in statement.getName() and variable in statement.getName():
+            if debug == 1:
+                print ("Found assignment: ", end='')
+                print (statement.getName())
+            return getVariableType(statement.getName(), debug)
+    return "ERROR: UNABLE TO DETERMINE VARIABLE TYPE"
+
+#Function is a helper method for findVariable()
+#Takes a line as parameter and returns the type
+def getVariableType(line, debug):
+    if debug == 2:
+        stackTrace()
+    if debug == 1:
+        print ("Get variable type: " + line)
+    line = line.lstrip()
+    line = line[:line.index(' ')]
+    return line
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line ender
