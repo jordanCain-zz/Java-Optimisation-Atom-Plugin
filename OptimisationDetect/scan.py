@@ -35,6 +35,8 @@ def detect(parent, debug):
 def recursionDetect(parent, debug):
     if debug >= 2:
         stackTrace()
+    if debug == 1:
+        print ("Recursion Detect")
     #Get all the methods in the tree
     methods = walker.getMethods(parent, debug)
     for method in methods:
