@@ -49,7 +49,7 @@ def analyseFile(content, debug):
     if debug == 1:
         print ("Analyse file")
     #we use an iterator so we can track the line number
-    currentParent = Package("SuperParent")
+    currentParent = Package("SuperParent", 0)
     for i, line in enumerate(content):
         currentParent = analyseLine(line.rstrip('\n'), currentParent, i, debug)
     return currentParent
@@ -105,7 +105,7 @@ def packageFound(line, lineNo, debug):
         stackTrace()
     if debug == 1:
         print ("found package: " + line[8:-2])
-    newPackage = Package(line[8:-2])
+    newPackage = Package(line[8:-2], lineNo)
     return newPackage
 
 def importFound(line, parent, lineNo, debug):
@@ -123,7 +123,7 @@ def classFound(line, parent, lineNo, debug):
     if debug == 1:
         print ("found class: " + line)
     startIndex = (line.index("class") + 6)
-    newClass = Class(line[startIndex:-3], parent, getScope(line, debug))
+    newClass = Class(line[startIndex:-3], parent, getScope(line, debug), lineNo)
     parent.addChild(newClass)
     return newClass
 
@@ -168,7 +168,7 @@ def methodFound(line, parent, lineNo,  debug):
     startIndex = endIndex
     while (line[startIndex] != ' '):
         startIndex -= 1
-    newMethod = Method(line[startIndex:endIndex], parent, getScope(line, debug), isStatic(line, debug))
+    newMethod = Method(line[startIndex:endIndex], parent, getScope(line, debug), isStatic(line, debug), lineNo)
     newMethod.setParams(getParams(line, debug))
     newMethod.setType(getType(line, newMethod, debug))
     parent.addChild(newMethod)
@@ -180,7 +180,7 @@ def statementFound(line, parent, lineNo, debug):
         stackTrace()
     if debug == 1:
         print ("Found statement: " + line)
-    newStatement = Statement(line, parent)
+    newStatement = Statement(line, parent, lineNo)
     parent.addChild(newStatement)
 
 #Function called when a new condition is found
@@ -190,7 +190,7 @@ def conditionFound(line, parent, lineNo, debug):
         stackTrace()
     if debug == 1:
         print ("Found condition: " + line)
-    newCondition = Condition(line, parent, "if")
+    newCondition = Condition(line, parent, "if", lineNo)
     parent.addChild(newCondition)
     return newCondition
 
@@ -201,7 +201,7 @@ def loopFound(line, parent, lineNo, debug):
         stackTrace()
     if debug == 1:
         print ("Found loop: " + line)
-    newLoop = Loop(line, parent, "for")
+    newLoop = Loop(line, parent, "for", lineNo)
     parent.addChild(newLoop)
     return newLoop
 

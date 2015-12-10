@@ -20,3 +20,8 @@ class TestPackView
 
   getElement: ->
     @element
+
+  setOutput: (output) ->
+    console.log("setOutput")
+    displayText = "Suggestions: #{output}"
+    @element.children[0].textContent = displayText

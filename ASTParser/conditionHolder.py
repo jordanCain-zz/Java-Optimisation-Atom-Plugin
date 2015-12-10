@@ -3,7 +3,7 @@ from statementHolder import Statement
 #Condition inheites statement
 class Condition(Statement):
     #Condtions can be if, switch...
-    def __init__(self, name, parent, conditionType, lineNo = 0):
+    def __init__(self, name, parent, conditionType, lineNo):
         Statement.__init__(self, name, parent, lineNo)
         self.conditionType = conditionType
         self.children = []

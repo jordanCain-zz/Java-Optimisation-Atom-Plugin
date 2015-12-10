@@ -48,9 +48,9 @@ def recursionDetect(parent, debug):
             if debug == 1:
                 print("\tstatement: " + statement.getName() + " #### parent: " + statement.getParent().getName())
             if method.getName() in statement.getName():
-                if debug == 0:
+                if debug == 1:
                     print ("found a possible recursion: ", end='')
-                    print (statement.getName() + "\tin method: " + method.getName())
+                    print (statement.getName() + "\tin method: " + method.getName() + "Line: " + str(method.getLineNo()))
                 #We now need to ensure the function call is to the method we're in
                 #It could be a function with the same name but different list of Params
                 #When comparing parameters we need to compare types not names!
@@ -68,8 +68,11 @@ def recursionDetect(parent, debug):
 
                 if statementParamTypes == methodParamTypes:
                     print ("We found an actual recursion")
+                    print ("Method:    " + method.getName() + " | line: " + str(method.getLineNo()))
+                    print ("Statement: " + statement.getName() + " | line: " + str(statement.getLineNo()))
                 else:
-                    print ("Not a recursive call")
+                    if debug == 1:
+                        print ("Not a recursive call")
 
                 if debug == 1:
                     print ("Method param types: " + str(methodParamTypes))

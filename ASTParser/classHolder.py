@@ -2,7 +2,7 @@ from packageHolder import Package
 
 class Class:
     #SOURCE:: http://stackoverflow.com/questions/2164258/multiple-constructors-in-python
-    def __init__(self, name, parent, scope, inheritance = "", lineNo=0):
+    def __init__(self, name, parent, scope, lineNo, inheritance = ""):
         self.name = name.rstrip('\n')
         self.parent = parent
         self.variables = []

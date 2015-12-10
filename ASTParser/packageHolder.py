@@ -1,8 +1,9 @@
 class Package:
-    def __init__(self, name):
+    def __init__(self, name, lineNo):
         self.name = name.rstrip('\n')
         self.children = []
         self.imports = []
+        self.lineNo = lineNo
 
     def getName(self):
         return self.name

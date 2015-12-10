@@ -3,7 +3,7 @@ from statementHolder import Statement
 #loop inherits statement
 class Loop(Statement):
     #Loop has a special attribute, looptype(For, while, do)
-    def __init__(self, name, parent, loopType, lineNo = 0):
+    def __init__(self, name, parent, loopType, lineNo):
         Statement.__init__(self, name, parent, lineNo)
         self.loopType = loopType
         self.children = []

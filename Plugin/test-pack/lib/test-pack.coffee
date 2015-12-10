@@ -17,10 +17,29 @@ module.exports = TestPack =
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace', 'test-pack:toggle': => @toggle()
 
+  deactivate: ->
+    @modalPanel.destroy()
+    @subscriptions.dispose()
+    @testPackView.destroy()
+
+  serialize: ->
+    testPackViewState: @testPackView.serialize()
+
   toggle: ->
-    console.log 'Attempting to run some python'
-    command = 'C:\\Users\\jordan\\Documents\\GitHub\\javaParser\\runnable.py'
-    args = [' ']
-    stdout = (output) -> console.log(output)
-    exit = (code) -> console.log("Code magically works!!!! #{code}")
-    process = new BufferedProcess({command, args, stdout, exit})
+    if @modalPanel.isVisible()
+      @modalPanel.hide()
+    else
+      console.log 'Attempting to run some python'
+      command = 'C:\\Users\\jordan\\Documents\\GitHub\\javaParser\\runnable.py'
+      args = [' ']
+      stdout = @stdoutFunc
+      #stderr = @stderrFunc
+      exit = (code) -> console.log("Code magically works!!!! #{code}")
+      process = new BufferedProcess({command, args, stdout, exit})
+      @modalPanel.show()
+
+  stdoutFunc: (output) ->
+    console.log("stdoutfunc")
+    #output = "test"
+    #console.log(output)
+    @testPackView.setOutput(output)
