@@ -51,7 +51,7 @@ def analyseFile(content, debug):
     #we use an iterator so we can track the line number
     currentParent = Package("SuperParent")
     for i, line in enumerate(content):
-        currentParent = analyseLine(line.rstrip('\n'), currentParent, debug)
+        currentParent = analyseLine(line.rstrip('\n'), currentParent, i, debug)
     return currentParent
 
 #Function called to analyse an individual line
@@ -61,46 +61,46 @@ def analyseFile(content, debug):
 #SOURCE:: https://docs.python.org/2/library/re.html ---regex
 #SOuRCE:: http://www.regexr.com/ ---more regex
 #SOURCE:: http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python ---empty line
-def analyseLine(line, parent, debug):
+def analyseLine(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
         print ("AnalyseLine")
     if re.search("(package)\s.+(;)", line):
         #regex: package, whitespace, one or more chars, finally semi-colon
-        parent = packageFound(line, debug)
+        parent = packageFound(line, lineNo, debug)
         return parent
     elif re.search("(import)\s\w+.*(;)", line):
-        importFound(line, parent, debug)
+        importFound(line, parent, lineNo, debug)
     elif re.search("\w+\s(class)\s\w+\s(\{)", line):
         #regex: one or more words, whitespace, "class", whitespace, one or more words, {
-        parent = classFound(line, parent, debug)
+        parent = classFound(line, parent, lineNo, debug)
         return parent
     elif re.search("((public)|(private))\s.*(\().*(\))", line):
         #regex: public or private, whitespace, any number of chars, "(", any number of chars, finally ")"
-        parent = methodFound(line, parent, debug)
+        parent = methodFound(line, parent, lineNo, debug)
         return parent
     elif re.search("((private)|(public))\s((static)\s)?[a-zA-z]*\s[a-z0-9]+\s*((\;)|(\=.*\;))", line):
         #regex: public or private, whitespace, possible static, word, whitespace,word,possible whitespace, semicolon or = plus chars semicolon
-        classAtributeFound(line, parent, debug)
+        classAtributeFound(line, parent, lineNo, debug)
     elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-Za-z\-\=\&\|\!\^\>\<\[\]\s]+(\))|(else)", line):
         #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
-        parent = conditionFound(line, parent, debug)
+        parent = conditionFound(line, parent, lineNo, debug)
         return parent
     elif ("for" in line) and ("{" in line):
         re.search("((for)\s*(\().+(\)))|((while)\s*(\().*(\)))[^;]|(do)\s*", line)
-        parent = loopFound(line, parent, debug)
+        parent = loopFound(line, parent, lineNo, debug)
         return parent
     elif ("}" in line) and (not "{" in line):
         # '}' denotes we have left a block and need to go up a parent
         parent = parent.getParent()
     else:
         if line.isspace() == False:
-            statementFound(line, parent, debug)
+            statementFound(line, parent, lineNo, debug)
     return parent
 
 #Function called when a new package is found
-def packageFound(line, debug):
+def packageFound(line, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -108,7 +108,7 @@ def packageFound(line, debug):
     newPackage = Package(line[8:-2])
     return newPackage
 
-def importFound(line, parent, debug):
+def importFound(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -117,7 +117,7 @@ def importFound(line, parent, debug):
     parent.addImport(line[7:-1])
 
 #Function called when a new class is found
-def classFound(line, parent, debug):
+def classFound(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -130,7 +130,7 @@ def classFound(line, parent, debug):
 #Function called when a class atribute is found
 #TODO:: Improve the detection of differnt elements by using split(' ')
 #TODO:: Ensure we can pick up static attributes
-def classAtributeFound(line, parent, debug):
+def classAtributeFound(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -158,7 +158,7 @@ def classAtributeFound(line, parent, debug):
 
 
 #Function called when a new method is found
-def methodFound(line, parent, debug):
+def methodFound(line, parent, lineNo,  debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -175,7 +175,7 @@ def methodFound(line, parent, debug):
     return newMethod
 
 #Function called when a new statement is found
-def statementFound(line, parent, debug):
+def statementFound(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -185,7 +185,7 @@ def statementFound(line, parent, debug):
 
 #Function called when a new condition is found
 #Returns the condition object as a new parent
-def conditionFound(line, parent, debug):
+def conditionFound(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
@@ -196,7 +196,7 @@ def conditionFound(line, parent, debug):
 
 #Function called when a new loop is found
 #Returns the loop object as a new parent
-def loopFound(line, parent, debug):
+def loopFound(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:

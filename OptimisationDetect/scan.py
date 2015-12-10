@@ -67,7 +67,9 @@ def recursionDetect(parent, debug):
                 statementParamTypes = getStatementParamTypes(params, method, debug)
 
                 if statementParamTypes == methodParamTypes:
-                    print ("We found an actual recursion!!!!")
+                    print ("We found an actual recursion")
+                else:
+                    print ("Not a recursive call")
 
                 if debug == 1:
                     print ("Method param types: " + str(methodParamTypes))
@@ -136,7 +138,7 @@ def cleanParam(param, debug):
 
     if debug == 1:
         print ("left of op: " + left + " right of op: " + right)
-    print ("Returning: " + param)
+        print ("Returning: " + param)
     return param
 
 def getType(left, right, debug):
