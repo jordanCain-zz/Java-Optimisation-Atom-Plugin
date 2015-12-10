@@ -33,13 +33,14 @@ module.exports = TestPack =
       command = 'C:\\Users\\jordan\\Documents\\GitHub\\javaParser\\runnable.py'
       args = [' ']
       stdout = @stdoutFunc
-      #stderr = @stderrFunc
       exit = (code) -> console.log("Code magically works!!!! #{code}")
       process = new BufferedProcess({command, args, stdout, exit})
       @modalPanel.show()
 
-  stdoutFunc: (output) ->
+  stdoutFunc: (output) =>
     console.log("stdoutfunc")
     #output = "test"
-    #console.log(output)
-    @testPackView.setOutput(output)
+    console.log(output)
+    output = "test"
+    @testPackView.setOutput("output should be here :/")
+    #@testPackView.setOutput(output)
