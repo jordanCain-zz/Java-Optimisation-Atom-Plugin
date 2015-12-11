@@ -32,15 +32,11 @@ module.exports = TestPack =
       console.log 'Attempting to run some python'
       command = 'C:\\Users\\jordan\\Documents\\GitHub\\javaParser\\runnable.py'
       args = [' ']
-      stdout = @stdoutFunc
+      stdout = (output) => @stdoutFunc output
       exit = (code) -> console.log("Code magically works!!!! #{code}")
-      process = new BufferedProcess({command, args, stdout, exit})
+      @process = new BufferedProcess({command, args, stdout, exit})
       @modalPanel.show()
 
-  stdoutFunc: (output) =>
-    console.log("stdoutfunc")
-    #output = "test"
-    console.log(output)
-    output = "test"
-    @testPackView.setOutput("output should be here :/")
-    #@testPackView.setOutput(output)
+#SOURCE:: https://github.com/bleikamp/processing/blob/master/lib/processing-view.coffee
+  stdoutFunc: (output) ->
+    @testPackView.log(output)

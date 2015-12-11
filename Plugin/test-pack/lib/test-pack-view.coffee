@@ -1,5 +1,6 @@
 module.exports =
 class TestPackView
+
   constructor: (serializedState) ->
     # Create root element
     @element = document.createElement('div')
@@ -7,21 +8,13 @@ class TestPackView
 
     # Create message element
     message = document.createElement('div')
-    message.textContent = "The TestPack package is Alive! It's ALIVE!"
+    message.textContent = "Test"
     message.classList.add('message')
     @element.appendChild(message)
-
-  # Returns an object that can be retrieved when package is activated
-  serialize: ->
-
-  # Tear down any state and detach
-  destroy: ->
-    @element.remove()
 
   getElement: ->
     @element
 
-  setOutput: (output) ->
-    console.log("setOutput")
-    displayText = "Suggestions: #{output}"
-    @element.children[0].textContent = displayText
+  log: (output) ->
+    console.log(output);
+    @element.children[0].textContent = output
