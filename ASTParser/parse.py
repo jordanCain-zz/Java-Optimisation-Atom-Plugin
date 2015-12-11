@@ -65,7 +65,7 @@ def analyseLine(line, parent, lineNo, debug):
     if debug >= 2:
         stackTrace()
     if debug == 1:
-        print ("AnalyseLine")
+        print ("AnalyseLine: " + line)
     if re.search("(package)\s.+(;)", line):
         #regex: package, whitespace, one or more chars, finally semi-colon
         parent = packageFound(line, lineNo, debug)

@@ -6,15 +6,13 @@ class TestPackView
     @element = document.createElement('div')
     @element.classList.add('test-pack')
 
-    # Create message element
-    message = document.createElement('div')
-    message.textContent = "Test"
-    message.classList.add('message')
-    @element.appendChild(message)
-
   getElement: ->
     @element
 
   log: (output) ->
-    console.log(output);
-    @element.children[0].textContent = output
+    output = output.split "\n" #split the output into an array based on new line characters
+    for item in output  #for each line in the array we can create a new div to conatin it
+      newMessage = document.createElement('div')
+      newMessage.textContent = item
+      newMessage.classList.add('message')
+      @element.appendChild(newMessage)
