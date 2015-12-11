@@ -51,5 +51,12 @@ class Method:
             currentStatement.printNode()
         print ("}")
 
+    #Function to print just the name of the method, scope and parameters
     def toString(self):
-        print ("Method: " + self.name)
+        output = self.scope.lstrip()
+        if self.static:
+            output = output + " static"
+        output = output + self.returnType +self.name +'('
+        for param in self.parameters:
+            output = output + param + ','
+        return (output[0:-1] + ")")

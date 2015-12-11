@@ -56,7 +56,7 @@ def getMethods(parent, debug):
                 print ("\tFound not method" + method.getName())
     return finalMethods
 
-#Function that can be used to recursivly go through a tree and return all methods
+#Function that can be used to recursivly go through a tree and return all statements
 def getStatements(parent, debug):
     if debug == 2:
         stackTrace()

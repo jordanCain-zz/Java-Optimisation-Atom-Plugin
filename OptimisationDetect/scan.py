@@ -41,9 +41,7 @@ def recursionDetect(parent, debug):
     methods = walker.getMethods(parent, debug)
     for method in methods:
         #For each method we need to analyse the statements inside it
-        #TODO:: this get children also needs to check if the children have any children
-        #i.e a condition statement will have children
-        statements = method.getChildren()
+        statements = walker.getStatements(method, debug)
         for statement in statements:
             if debug == 1:
                 print("\tstatement: " + statement.getName() + " #### parent: " + statement.getParent().getName())
@@ -68,8 +66,8 @@ def recursionDetect(parent, debug):
 
                 if statementParamTypes == methodParamTypes:
                     print ("We found an actual recursion")
-                    print ("Method:    " + method.getName() + " | line: " + str(method.getLineNo()))
-                    print ("Statement: " + statement.getName() + " | line: " + str(statement.getLineNo()))
+                    print ("Method:    " + method.toString() + " | line: " + str(method.getLineNo()))
+                    print ("Statement: " + statement.getName().lstrip() + " | line: " + str(statement.getLineNo()))
                 else:
                     if debug == 1:
                         print ("Not a recursive call")
@@ -183,18 +181,6 @@ def getVariableType(line, debug):
     line = line.lstrip()
     line = line[:line.index(' ')]
     return line
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
