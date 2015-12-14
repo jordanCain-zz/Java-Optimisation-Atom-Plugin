@@ -5,25 +5,13 @@ from methodHolder import Method
 from statementHolder import Statement
 from conditionHolder import Condition
 from loopHolder import Loop
+import debugUtil
 import re
-import inspect
-
-#TODO:: Move stack trace into a utils file
-def stackTrace():
-    formatStackTrace(len(inspect.stack())-2)
-    print (inspect.stack()[1][3] + " ", end="")
-    formatStackTrace(len(inspect.stack())-2)
-    print (" " + inspect.stack()[1][1] + " : " + str(inspect.stack()[1][2]-2))
-
-def formatStackTrace(count):
-    while count > 0:
-        print("  ", end="")
-        count -= 1
 
 #Function to read in and print the file
 def read(debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print("Starting scan")
     fileContents = readFile(debug)
@@ -34,7 +22,7 @@ def read(debug):
 #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
 def readFile(debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Read File")
     fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
@@ -45,7 +33,7 @@ def readFile(debug):
 #Function to iterate over all the lines of a file
 def analyseFile(content, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Analyse file")
     #we use an iterator so we can track the line number
@@ -63,7 +51,7 @@ def analyseFile(content, debug):
 #SOURCE:: http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python ---empty line
 def analyseLine(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("AnalyseLine: " + line)
     if re.search("(package)\s.+(;)", line):
@@ -102,7 +90,7 @@ def analyseLine(line, parent, lineNo, debug):
 #Function called when a new package is found
 def packageFound(line, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("found package: " + line[8:-2])
     newPackage = Package(line[8:-2], lineNo)
@@ -110,7 +98,7 @@ def packageFound(line, lineNo, debug):
 
 def importFound(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("found import: " + line[7:-1])
     #Adds the import to an attribute of a package
@@ -119,7 +107,7 @@ def importFound(line, parent, lineNo, debug):
 #Function called when a new class is found
 def classFound(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("found class: " + line)
     startIndex = (line.index("class") + 6)
@@ -132,7 +120,7 @@ def classFound(line, parent, lineNo, debug):
 #TODO:: Ensure we can pick up static attributes
 def classAtributeFound(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("found classAtrribute: " + line)
     scope = getScope(line, debug)
@@ -160,7 +148,7 @@ def classAtributeFound(line, parent, lineNo, debug):
 #Function called when a new method is found
 def methodFound(line, parent, lineNo,  debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("found method: " + line)
     #Get the method name
@@ -177,7 +165,7 @@ def methodFound(line, parent, lineNo,  debug):
 #Function called when a new statement is found
 def statementFound(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Found statement: " + line)
     newStatement = Statement(line, parent, lineNo)
@@ -187,9 +175,10 @@ def statementFound(line, parent, lineNo, debug):
 #Returns the condition object as a new parent
 def conditionFound(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Found condition: " + line)
+    #TODO:: Detect switch statements
     newCondition = Condition(line, parent, "if", lineNo)
     parent.addChild(newCondition)
     return newCondition
@@ -198,9 +187,10 @@ def conditionFound(line, parent, lineNo, debug):
 #Returns the loop object as a new parent
 def loopFound(line, parent, lineNo, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Found loop: " + line)
+        #TODO:: Add while and do while detection
     newLoop = Loop(line, parent, "for", lineNo)
     parent.addChild(newLoop)
     return newLoop
@@ -208,7 +198,7 @@ def loopFound(line, parent, lineNo, debug):
 #Function to determine whether a method is public or private and return it
 def getScope(line, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Get scope: " + line)
     #regex is slow, so use "in"
@@ -222,7 +212,7 @@ def getScope(line, debug):
 #Function to determine whether a class attribute/method is static
 def isStatic(line, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Is static: " + line)
     if "static" in line:
@@ -232,7 +222,7 @@ def isStatic(line, debug):
 #Function to get the return type of a method
 def getType(line, newMethod, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Get type: " + line)
     endIndex = line.index(newMethod.getName())
@@ -243,7 +233,7 @@ def getType(line, newMethod, debug):
 
 def getParams(line, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Get params: " + line)
     startIndex = line.index('(')+1
@@ -258,7 +248,7 @@ def getParams(line, debug):
 #Function to print a simple tree to console
 def printTree(parent, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Start node: ", parent.getName())
         print ("###############################")

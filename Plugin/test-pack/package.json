@@ -1,5 +1,5 @@
 {
-  "name": "test-pack",
+  "name": "JavaOptimisationDetect",
   "main": "./lib/test-pack",
   "version": "0.0.0",
   "description": "A short description of your package",

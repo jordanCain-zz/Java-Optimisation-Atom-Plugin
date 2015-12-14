@@ -3,29 +3,16 @@ import sys
 #SOURCE:: http://stackoverflow.com/questions/4383571/importing-files-from-different-folder-in-python
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTWalker')
+sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser')
 import parse
 import walker
-#SOURCE:: http://stackoverflow.com/questions/2654113/python-how-to-get-the-callers-method-name-in-the-called-method
-import inspect
-#SOURCE:: http://stackoverflow.com/questions/1156023/print-current-call-stack-from-a-method-in-python-code
-import traceback
+import debugUtil
 from methodHolder import Method
 from classHolder import Class
 
-def stackTrace():
-    formatStackTrace(len(inspect.stack())-2)
-    print (inspect.stack()[1][3] + " ", end="")
-    formatStackTrace(len(inspect.stack())-2)
-    print (" " + inspect.stack()[1][1] + " : " + str(inspect.stack()[1][2]-2))
-
-def formatStackTrace(count):
-    while count > 0:
-        print("  ", end="")
-        count -= 1
-
 def detect(parent, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Detecting Optimisations")
     recursionDetect(parent, debug)
@@ -34,7 +21,7 @@ def detect(parent, debug):
 #Params: parent is the highest level of the tree, debug will add extra output to console
 def recursionDetect(parent, debug):
     if debug >= 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Recursion Detect")
     #Get all the methods in the tree
@@ -78,7 +65,7 @@ def recursionDetect(parent, debug):
 
 def getMethodParamTypes(params, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Method params: ", end='')
         print (str(params))
@@ -92,7 +79,7 @@ def getMethodParamTypes(params, debug):
 
 def getStatementParamTypes(params, method, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Statement params: ", end='')
         print (str(params))
@@ -120,7 +107,7 @@ def getStatementParamTypes(params, method, debug):
 
 def cleanParam(param, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Cleaning param: " + param)
     #Lets check if param is a number
@@ -144,7 +131,7 @@ def cleanParam(param, debug):
 
 def getType(left, right, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Get type: left: " + left + " right: " + right)
     if left.isdigit() or right.isdigit():
@@ -158,7 +145,7 @@ def getType(left, right, debug):
 
 def findVariable(variable, method, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Find Variable: " + variable)
     #Get a list of all statements in the class to check variable against
@@ -175,7 +162,7 @@ def findVariable(variable, method, debug):
 #Takes a line as parameter and returns the type
 def getVariableType(line, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Get variable type: " + line)
     line = line.lstrip()

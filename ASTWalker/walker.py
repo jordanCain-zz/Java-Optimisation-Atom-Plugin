@@ -1,36 +1,25 @@
 import sys
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
 import parse
-import inspect
+import debugUtil
 from classHolder import Class
 from methodHolder import Method
 from statementHolder import Statement
 from loopHolder import Loop
 from conditionHolder import Condition
 
-def stackTrace():
-    formatStackTrace(len(inspect.stack())-2)
-    print (inspect.stack()[1][3] + " ", end="")
-    formatStackTrace(len(inspect.stack())-2)
-    print (" " + inspect.stack()[1][1] + " : " + str(inspect.stack()[1][2]-2))
-
-def formatStackTrace(count):
-    while count > 0:
-        print("  ", end="")
-        count -= 1
-
 #Function that will return a list of all classes in the tree
 #Params: parent is the highest level of the tree
 def getClasses(parent):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     parent.getChildren()
 
 #Function that will return a list of all methods in the tree
 #Params: parent is the highest level of the tree, debug will add extra output to console
 def getMethods(parent, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print("getMethods")
     #get children of the package, get the class(s)
@@ -59,7 +48,7 @@ def getMethods(parent, debug):
 #Function that can be used to recursivly go through a tree and return all statements
 def getStatements(parent, debug):
     if debug == 2:
-        stackTrace()
+        debugUtil.stackTrace()
     if debug == 1:
         print ("Get Statements: " + parent.getName())
     statements = []
