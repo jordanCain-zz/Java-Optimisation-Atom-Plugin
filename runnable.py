@@ -11,7 +11,7 @@ import debugUtil
 #0 Dev trace        - produces extra log info in areas being written
 #1 User trace       - produces extra logging info
 #2 Service Trace    - Produces a stackTrace
-debugLevel = 2
+debugLevel = 1
 
 #Run the parse and detect
 def run():

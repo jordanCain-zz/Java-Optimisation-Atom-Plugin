@@ -20,6 +20,9 @@ public class ADSWeek3 {
         int value=in.nextInt();	       // Read an integer from the console window
         int factorial=RecursiveFactorial(value);// Calculate the factorial of value
         System.out.println("The factorial of "+value+" is "+factorial);
+        while (true){
+          System.out.println("this is a while loop, its infinite");
+        }
     }
     private static int RecursiveFactorial(int value, String test){
         int returnValue = 1;
