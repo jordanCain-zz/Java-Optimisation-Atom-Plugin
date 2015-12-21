@@ -75,7 +75,7 @@ def analyseLine(line, parent, lineNo, debug):
         #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
         parent = conditionFound(line, parent, lineNo, debug)
         return parent
-    elif re.search("((for)\s*(\().+(\)))|((while)\s*(\().*(\)))[^;]|(do)\s*", line):
+    elif re.search("((for)\s*(\().+(\)))|((while)\s*(\().*(\)))[^;]|(do)\s*\{", line):
         parent = loopFound(line, parent, lineNo, debug)
         return parent
     elif ("}" in line) and (not "{" in line):
@@ -193,7 +193,7 @@ def loopFound(line, parent, lineNo, debug):
         newLoop = Loop(line, parent, "for", lineNo)
     if re.search("((while)\s*(\().*(\)))[^;]", line):
         newLoop = Loop(line, parent, "while", lineNo)
-    if re.search("(do)\s*", line):
+    if re.search("(do)\s*\{", line):
         newLoop = Loop(line, parent, "do", lineNo)
     parent.addChild(newLoop)
     return newLoop

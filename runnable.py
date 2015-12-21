@@ -18,7 +18,8 @@ def run():
     if debugLevel == 2:
         debugUtil.stackTrace()
     parent = parse.read(debugLevel)
+    #parent.printNode()
     optimisations = scan.detect(parent, debugLevel)
-    scan.output(optimisations)
+    scan.output(optimisations, debugLevel)
 
 run()

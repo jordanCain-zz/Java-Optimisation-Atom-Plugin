@@ -21,7 +21,8 @@ def getMethods(parent, debug):
     if debug == 2:
         debugUtil.stackTrace()
     if debug == 1:
-        print("getMethods")
+        print("getMethods, parent: ", end='')
+        print (parent.getName())
     #get children of the package, get the class(s)
     classes = parent.getChildren()
     classMethods = []

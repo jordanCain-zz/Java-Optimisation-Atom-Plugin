@@ -16,18 +16,23 @@ def detect(parent, debug):
     if debug == 2:
         debugUtil.stackTrace()
     if debug == 1:
-        print ("Detecting Optimisations")
+        print ("Detecting Optimisations, parent: ", end='')
+        print (parent.getName())
     recursions = recursionDetect(parent, debug)
     return recursions
 
-def output(recursions):
+def output(recursions, debug):
+    if debug == 2:
+        debugUtil.stackTrace()
+    if debug == 1:
+        print ("Output optimisations")
     for recursion in recursions:
         recursion.toString()
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console
 def recursionDetect(parent, debug):
-    if debug >= 2:
+    if debug == 2:
         debugUtil.stackTrace()
     if debug == 1:
         print ("Recursion Detect")
@@ -38,6 +43,7 @@ def recursionDetect(parent, debug):
     for method in methods:
         #For each method we need to analyse the statements inside it
         statements = walker.getStatements(method, debug)
+        #TODO:: Oppurtunity to implement threading here
         for statement in statements:
             if debug == 1:
                 print("\tstatement: " + statement.getName() + " #### parent: " + statement.getParent().getName())
