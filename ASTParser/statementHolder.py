@@ -20,6 +20,3 @@ class Statement:
 
     def printNode(self):
         print (self.name)
-
-    def toString(self):
-        print ("I'm a statement")

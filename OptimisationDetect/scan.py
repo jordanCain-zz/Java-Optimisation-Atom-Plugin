@@ -9,13 +9,20 @@ import walker
 import debugUtil
 from methodHolder import Method
 from classHolder import Class
+from optimisations import Recursion
+from optimisations import LoopToUnroll
 
 def detect(parent, debug):
     if debug == 2:
         debugUtil.stackTrace()
     if debug == 1:
         print ("Detecting Optimisations")
-    recursionDetect(parent, debug)
+    recursions = recursionDetect(parent, debug)
+    return recursions
+
+def output(recursions):
+    for recursion in recursions:
+        recursion.toString()
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console
@@ -24,6 +31,8 @@ def recursionDetect(parent, debug):
         debugUtil.stackTrace()
     if debug == 1:
         print ("Recursion Detect")
+    #Initialise our return array which will hold recursion objects
+    recursions = []
     #Get all the methods in the tree
     methods = walker.getMethods(parent, debug)
     for method in methods:
@@ -36,32 +45,32 @@ def recursionDetect(parent, debug):
                 if debug == 1:
                     print ("found a possible recursion: ", end='')
                     print (statement.getName() + "\tin method: " + method.getName() + "Line: " + str(method.getLineNo()))
-                #We now need to ensure the function call is to the method we're in
-                #It could be a function with the same name but different list of Params
-                #When comparing parameters we need to compare types not names!
                 statementName = statement.getName()
                 methodName = method.getName()
                 #Create a substring of the method call and parameters
                 statementName = statementName[statementName.index(methodName):]
+                #TODO:: if a param is a function call this will break
                 statementName = statementName[:statementName.index(')')+1]
-
+                #Get the params of the statement and method
                 params = method.getParams()
                 methodParamTypes = getMethodParamTypes(params, debug)
-
                 params = parse.getParams(statementName, debug)
                 statementParamTypes = getStatementParamTypes(params, method, debug)
 
+                #If paramater types match it's a recurisve call
                 if statementParamTypes == methodParamTypes:
-                    print ("We found an actual recursion")
-                    print ("Method:    " + method.toString() + " | line: " + str(method.getLineNo()))
-                    print ("Statement: " + statement.getName().lstrip() + " | line: " + str(statement.getLineNo()))
+                    recursions.append(Recursion(statement, method))
+                    if debug == 1:
+                        print ("We found an actual recursion")
+                        print ("Method:    " + method.toString() + " | line: " + str(method.getLineNo()))
+                        print ("Statement: " + statement.getName().lstrip() + " | line: " + str(statement.getLineNo()))
                 else:
                     if debug == 1:
                         print ("Not a recursive call")
-
                 if debug == 1:
                     print ("Method param types: " + str(methodParamTypes))
                     print ("Statement param types: " + str(statementParamTypes))
+    return recursions
 
 def getMethodParamTypes(params, debug):
     if debug == 2:

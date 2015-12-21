@@ -38,6 +38,7 @@ class Method:
     def getParams(self):
         return self.parameters
 
+    #Print the method and all children
     def printNode(self):
         output = self.scope
         if self.static:
