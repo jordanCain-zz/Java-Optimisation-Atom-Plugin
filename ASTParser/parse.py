@@ -5,6 +5,7 @@ from methodHolder import Method
 from statementHolder import Statement
 from conditionHolder import Condition
 from loopHolder import Loop
+from tryCatchHolder import TryCatch
 import debugUtil
 import re
 
@@ -25,7 +26,7 @@ def readFile(debug):
         debugUtil.stackTrace()
     if debug == 1:
         print ("Read File")
-    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
+    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADS2Assignment2.java"
     with open(fname) as fil:
         content = fil.readlines()
     return content
@@ -78,8 +79,13 @@ def analyseLine(line, parent, lineNo, debug):
     elif re.search("((for)\s*(\().+(\)))|((while)\s*(\().*(\)))[^;]|(do)\s*\{", line):
         parent = loopFound(line, parent, lineNo, debug)
         return parent
-    elif ("}" in line) and (not "{" in line):
-        # '}' denotes we have left a block and need to go up a parent
+    elif re.search("(try\s*\{)", line):
+        parent = tryFound(line, parent, lineNo, debug)
+        return parent
+    elif re.search("(catch\s*\([a-zA-Z0-9]+\s+[a-zA-Z0-9]+\))", line):
+        catchFound(line, parent, lineNo, debug)
+    elif ("}" in line) and (not "{" in line) and (not re.search("(catch\s*\([a-zA-Z0-9]+\s+[a-zA-Z0-9]+\))", line)):
+        # '}' denotes we have left a block and need to go up a parent except for in the case of a try catch
         parent = parent.getParent()
     else:
         if line.isspace() == False:
@@ -168,7 +174,13 @@ def statementFound(line, parent, lineNo, debug):
     if debug == 1:
         print ("Found statement: " + line)
     newStatement = Statement(line, parent, lineNo)
-    parent.addChild(newStatement)
+    if (not type(parent) is TryCatch):
+        parent.addChild(newStatement)
+    else:
+        if not parent.getCatchStatement:
+            parent.addTryChild(newStatement)
+        else:
+            parent.addCatchChild(newStatement)
 
 #Function called when a new condition is found
 #Returns the condition object as a new parent
@@ -197,6 +209,22 @@ def loopFound(line, parent, lineNo, debug):
         newLoop = Loop(line, parent, "do", lineNo)
     parent.addChild(newLoop)
     return newLoop
+
+def tryFound(line, parent, lineNo, debug):
+    if debug >= 2:
+        debugUtil.stackTrace()
+    if debug == 1:
+        print ("Found try statement: " + line)
+    newTryCatch = TryCatch(line, parent, lineNo)
+    parent.addChild(newTryCatch)
+    return newTryCatch
+
+def catchFound(line, parent, lineNo, debug):
+    if debug >= 2:
+        debugUtil.stackTrace()
+    if debug == 1:
+        print ("Found catch statement: " + line)
+    parent.addCatchStatement(line, lineNo)
 
 #Function to determine whether a method is public or private and return it
 def getScope(line, debug):
