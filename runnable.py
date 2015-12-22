@@ -11,15 +11,15 @@ import debugUtil
 #0 Dev trace        - produces extra log info in areas being written
 #1 User trace       - produces extra logging info
 #2 Service Trace    - Produces a stackTrace
-debugLevel = 0
+debugLevel = 1
 
 #Run the parse and detect
 def run():
     if debugLevel == 2:
         debugUtil.stackTrace()
     parent = parse.read(debugLevel)
-    #parent.printNode()
-    optimisations = scan.detect(parent, debugLevel)
-    scan.output(optimisations, debugLevel)
+    parent.printNode()
+    #optimisations = scan.detect(parent, debugLevel)
+    #scan.output(optimisations, debugLevel)
 
 run()

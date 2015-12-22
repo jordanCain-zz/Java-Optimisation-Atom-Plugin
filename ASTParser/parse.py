@@ -55,6 +55,7 @@ def analyseLine(line, parent, lineNo, debug):
         debugUtil.stackTrace()
     if debug == 1:
         print ("AnalyseLine: " + line)
+        print ("Current parent: " + parent.getName())
     if re.search("(package)\s.+(;)", line):
         #regex: package, whitespace, one or more chars, finally semi-colon
         parent = packageFound(line, lineNo, debug)
@@ -69,10 +70,10 @@ def analyseLine(line, parent, lineNo, debug):
         #regex: public or private, whitespace, any number of chars, "(", any number of chars, finally ")"
         parent = methodFound(line, parent, lineNo, debug)
         return parent
-    elif re.search("((private)|(public))\s((static)\s)?[a-zA-z]*\s[a-z0-9]+\s*((\;)|(\=.*\;))", line):
+    elif re.search("((private)|(public))\s((static)\s)?[A-z]*\s[A-z0-9]+\s*((\;)|(\=.*\;))", line):
         #regex: public or private, whitespace, possible static, word, whitespace,word,possible whitespace, semicolon or = plus chars semicolon
         classAtributeFound(line, parent, lineNo, debug)
-    elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-Za-z\-\=\&\|\!\^\>\<\[\]\s]+(\))|(else)", line):
+    elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-z\-\=\&\|\!\^\>\<\[\]\s\(\)\.\"\'\,\+]+(\))|(else)", line):
         #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
         parent = conditionFound(line, parent, lineNo, debug)
         return parent
@@ -82,9 +83,9 @@ def analyseLine(line, parent, lineNo, debug):
     elif re.search("(try\s*\{)", line):
         parent = tryFound(line, parent, lineNo, debug)
         return parent
-    elif re.search("(catch\s*\([a-zA-Z0-9]+\s+[a-zA-Z0-9]+\))", line):
+    elif re.search("(catch\s*\([A-z0-9]+\s+[A-z0-9]+\))", line):
         catchFound(line, parent, lineNo, debug)
-    elif ("}" in line) and (not "{" in line) and (not re.search("(catch\s*\([a-zA-Z0-9]+\s+[a-zA-Z0-9]+\))", line)):
+    elif ("}" in line) and (not "{" in line) and (not re.search("(catch\s*\([A-z0-9]+\s+[A-z0-9]+\))", line)):
         # '}' denotes we have left a block and need to go up a parent except for in the case of a try catch
         parent = parent.getParent()
     else:
@@ -174,13 +175,13 @@ def statementFound(line, parent, lineNo, debug):
     if debug == 1:
         print ("Found statement: " + line)
     newStatement = Statement(line, parent, lineNo)
-    if (not type(parent) is TryCatch):
-        parent.addChild(newStatement)
-    else:
+    if type(parent) is TryCatch:
         if not parent.getCatchStatement:
             parent.addTryChild(newStatement)
         else:
             parent.addCatchChild(newStatement)
+    else:
+        parent.addChild(newStatement)
 
 #Function called when a new condition is found
 #Returns the condition object as a new parent

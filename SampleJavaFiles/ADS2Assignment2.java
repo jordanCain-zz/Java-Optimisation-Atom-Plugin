@@ -18,12 +18,12 @@ public class ADS2Assignment2 {
         XMLParse parse = new XMLParse();
         TagNode root = new TagNode();
         menu(root, parse);
-        
+
     }
-    
+
     public static void menu(TagNode root, XMLParse parse){
         Scanner input = new Scanner(System.in);
-        
+
         int option = 1;
         while(option != 0){
             printMenu();
@@ -70,7 +70,7 @@ public class ADS2Assignment2 {
             }
         }
     }
-    
+
     public static void printMenu(){
         System.out.println("\nMain Menu");
         System.out.println();
@@ -82,13 +82,13 @@ public class ADS2Assignment2 {
         System.out.println("6. Search the tree(extra)");
         System.out.println("0. Terminate");
     }
-    
+
     public static void milestoneEdit(TagNode root, boolean inText){
         int i = 0;
         if (inText && "milestone".equals(root.name)){
             //System.out.print("Found\t");
             int count = 0;
-            String nValue = null; 
+            String nValue = null;
             String edValue = null;
             for (int j = 0; j < root.noOfAttributes; j++){  //go through all nodes checking for ed and n attributes
                 if(root.attributes[j].name.equals("ed")){   //get ed value
@@ -106,14 +106,16 @@ public class ADS2Assignment2 {
                 root.addAttribute(attr);
             }
         }
+        System.out.println("debug");
         while (i < 12 && root.child[i] != null){
-            if (root.name.equals("text"))   //find the text block
+            if (root.name.equals("text")){   //find the text block
                 inText = true;
+            }
             milestoneEdit(root.child[i], inText); //recursivly go through until all children explored
             i++;
         }
     }
-    
+
     public static String[] extractNames(TagNode root, boolean inText, String[] names){
         if ((root.name.equals("name") || root.name.equals("rs"))&& inText){    //inText ensures it only pulls names from within the text tag
             if (checkNames(names,root.data)){
@@ -125,14 +127,15 @@ public class ADS2Assignment2 {
         }
         int i = 0;
         while (i < 12 && root.child[i] != null){
-            if (root.name.equals("text"))   //find the text block
+            if (root.name.equals("text")){   //find the text block
                 inText = true;
+            }
             names = extractNames(root.child[i], inText, names); //recursivly go through until all children explored
             i++;
         }
         return names;
     }
-    
+
     public static boolean checkNames(String[] names, String name){
         for(int i=0;i<names.length; i++){
             if(name.equals(names[i])){
@@ -141,8 +144,8 @@ public class ADS2Assignment2 {
             }
         }
         return true;
-    }   
-    
+    }
+
     public static void writeNames(String[] names){
         try{
             StringBuilder nameLong = new StringBuilder(250);
@@ -150,7 +153,7 @@ public class ADS2Assignment2 {
             PrintWriter write;
             write = new PrintWriter("names.txt");   //print all found name attributes to a txt file
             for (int j = 0; j < names.length; j++){
-                //System.out.println("Name: "+names[j]);  
+                //System.out.println("Name: "+names[j]);
                 write.write(j+".\t"+names[j]+'\n');         //new line is seperator for names
                 nameLong.append(j+". "+names[j]+"<br>");
             }
@@ -162,9 +165,9 @@ public class ADS2Assignment2 {
         } catch(FileNotFoundException ex) {
             System.out.println(ex);
         }
-        
+
     }
-    
+
     public static void placeKeys(TagNode root){
         try{
             String[] names = extractNames();
@@ -173,7 +176,7 @@ public class ADS2Assignment2 {
             System.out.println(ex);
         }
     }
-    
+
     public static String[] keys(TagNode root, boolean inText, String[] names){
         if ((root.name.equals("name") || root.name.equals("rs") )&& inText){    //inText ensures it only pulls names from within the text tag
             //place the key
@@ -182,7 +185,7 @@ public class ADS2Assignment2 {
                 //System.out.println(names[i].substring(1));
                 if(names[i] != null && names[i].substring(1, names[i].length()-1).equals(root.data)){
                     //System.out.println(root.data);
-                    AttributeNode newAttr = new AttributeNode(); 
+                    AttributeNode newAttr = new AttributeNode();
                     newAttr.name = "key";
                     newAttr.value = Integer.toString(i);
                     root.addAttribute(newAttr);
@@ -193,14 +196,15 @@ public class ADS2Assignment2 {
         int i = 0;
         while (i < 12 && root.child[i] != null){
             //System.out.println("calling");
-            if (root.name.equals("text"))   //find the text block
+            if (root.name.equals("text")){   //find the text block
                 inText = true;
+            }
             keys(root.child[i], inText, names); //recursivly go through until all children explored
             i++;
         }
         return names;
     }
-    
+
     public static String[] extractNames(){
         try{
             FileInputStream nameFile = new FileInputStream("names.txt");
@@ -230,15 +234,15 @@ public class ADS2Assignment2 {
             System.out.println(ex);
         }
         return null;
-    } 
-    
+    }
+
     public static boolean cleanData(StringBuffer string){
         if (string.charAt(1) == ' ') {
             return false;
         }
         return true;
     }
-    
+
     public static void addRevisions(TagNode root, boolean complete, String user){
         if (root.name.equals("revisionDesc")){
             TagNode change = new TagNode(); //create the new tags
@@ -262,21 +266,22 @@ public class ADS2Assignment2 {
             type.name = "type";
             type.value = "program";
             key.name = "key";
-            
+
             Calendar cal = Calendar.getInstance();  //get the current date
             Date dateWithoutTime = cal.getTime();
             date.data = dateWithoutTime.toString();
             name.data = user;
             change.data = "Milestone xml:id attribute added, key attribute added to name and rs tags";
-            
+
             i = 0;
             StringBuffer keyBuffer = new StringBuffer(5);
             while(i < name.data.length()){      //extract only the initials
                 if(i == 0){
                     keyBuffer.append(name.data.charAt(i));
                 }
-                else if(name.data.charAt(i-1) == ' ')
+                else if(name.data.charAt(i-1) == ' '){
                     keyBuffer.append(name.data.charAt(i));
+                }
                 i++;
             }
             key.value = keyBuffer.toString();
@@ -290,7 +295,7 @@ public class ADS2Assignment2 {
             i++;
         }
     }
-    
+
     public static void searchTree(TagNode root){
         boolean upper = false;
         System.out.println("Searching the tree");
@@ -300,24 +305,27 @@ public class ADS2Assignment2 {
             String searchTerm = input.nextLine();
             System.out.println("Match case? y/n");
             char caseOpt = input.next().charAt(0);
-            if(caseOpt != 'y'){ 
+            if(caseOpt != 'y'){
                 searchTerm = searchTerm.toUpperCase();
                 upper = true;
             }
             System.out.println("Search started using: "+searchTerm);
             search(root, searchTerm, false, false, upper);
-        } else {
+        }
+        else {
             System.out.println("Tree is empty!");
         }
     }
-    
+
     public static boolean search(TagNode root, String searchTerm, boolean found1, boolean found2, boolean upper){
         if(found1 || found2){
             return true;
-        } else if(!upper){
+        }
+        else if(!upper){
             searchName(root,searchTerm,found1);
             searchData(root,searchTerm,found2);
-        } else if(upper){
+        }
+        else if(upper){
             searchNameUpper(root,searchTerm,found1);
             searchDataUpper(root,searchTerm,found2);
         }
@@ -326,12 +334,14 @@ public class ADS2Assignment2 {
             found1 = search(root.child[i], searchTerm, found1, found2, upper); //recursivly go through until all children explored
             i++;
         }
-        if (found1 || found2)
+        if (found1 || found2){
             return true;
-        else
+        }
+        else{
             return false;
+        }
     }
-    
+
     public static void searchName(TagNode root, String searchTerm, boolean found){
         if(searchTerm.length() < root.name.length()){
             for(int i = 0; i <= root.name.length()-searchTerm.length();i++){
@@ -340,22 +350,25 @@ public class ADS2Assignment2 {
                     found = true;
                     printSearch(root, searchTerm);
                     root.printFile(root,0);
-                } else {
+                }
+                else {
                     //System.out.println(root.name.substring(i,i+searchTerm.length())+" != "+searchTerm);
                 }
             }
-        } else {
+        }
+        else {
             if(root.name.equals(searchTerm)){
                 found = true;
                 System.out.println("Found: "+searchTerm);
                 printSearch(root,searchTerm);
                 root.printFile(root,0);
-            } else {
+            }
+            else {
                 //System.out.println(root.name+" != "+searchTerm);
             }
         }
     }
-    
+
     public static void searchData(TagNode root, String searchTerm, boolean found){
         if(!root.selfClosing){
             if(searchTerm.length() < root.data.length()){
@@ -365,23 +378,26 @@ public class ADS2Assignment2 {
                         found = true;
                         printSearch(root, searchTerm);
                         root.printFile(root,0);
-                    } else {
+                    }
+                    else {
                         //System.out.println(root.name.substring(i,i+searchTerm.length())+" != "+searchTerm);
                     }
                 }
-            } else {
+            }
+            else {
                 if(root.data.equals(searchTerm)){
                     found = true;
                     System.out.println("Found: "+searchTerm);
                     printSearch(root,searchTerm);
                     root.printFile(root,0);
-                } else {
+                }
+                else {
                     //System.out.println(root.name+" != "+searchTerm);
                 }
             }
         }
     }
-    
+
     public static void searchNameUpper(TagNode root, String searchTerm, boolean found){
         if(searchTerm.length() < root.name.length()){
             for(int i = 0; i <= root.name.length()-searchTerm.length();i++){
@@ -390,22 +406,25 @@ public class ADS2Assignment2 {
                     found = true;
                     printSearch(root, searchTerm);
                     root.printFile(root,0);
-                } else {
+                }
+                else {
                     //System.out.println(root.name.substring(i,i+searchTerm.length())+" != "+searchTerm);
                 }
             }
-        } else {
+        }
+        else {
             if(root.name.toUpperCase().equals(searchTerm)){
                 found = true;
                 System.out.println("Found: "+searchTerm);
                 printSearch(root,searchTerm);
                 root.printFile(root,0);
-            } else {
+            }
+            else {
                 //System.out.println(root.name+" != "+searchTerm);
             }
         }
     }
-    
+
     public static void searchDataUpper(TagNode root, String searchTerm, boolean found){
         if(!root.selfClosing){
             if(searchTerm.length() < root.data.length()){
@@ -415,23 +434,23 @@ public class ADS2Assignment2 {
                         found = true;
                         printSearch(root, searchTerm);
                         root.printFile(root,0);
-                    } else {
+                    }
+                    else {
                         //System.out.println(root.name.substring(i,i+searchTerm.length())+" != "+searchTerm);
                     }
                 }
-            } else {
+            }
+            else {
                 if(root.data.toUpperCase().equals(searchTerm)){
                     found = true;
                     System.out.println("Found: "+searchTerm);
                     printSearch(root,searchTerm);
                     root.printFile(root,0);
-                } else {
-                    //System.out.println(root.name+" != "+searchTerm);
                 }
             }
         }
     }
-    
+
     public static void printSearch(TagNode root, String searchTerm){
         System.out.println("Your search term was: "+searchTerm);
         System.out.println("It was found in: <"+root.name+">");

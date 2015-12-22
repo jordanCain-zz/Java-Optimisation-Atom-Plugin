@@ -18,6 +18,15 @@ class TryCatch(Statement):
     def addCatchChild(self, child):
         self.catchChildren.append(child)
 
+    def addChild(self, child):
+        if self.getCatchStatement:
+            self.addCatchChild(child)
+        else:
+            self.addTryChild(child)
+
+    def getName(self):
+        return self.name
+
     def getCatchStatement(self):
         return self.catchStatement
 
@@ -29,6 +38,9 @@ class TryCatch(Statement):
 
     def getCatchChildren(self):
         return self.catchChildren
+
+    def getParent(self):
+        return self.parent
 
     #Override
     def printNode(self):
