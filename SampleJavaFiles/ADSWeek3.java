@@ -20,13 +20,17 @@ public class ADSWeek3 {
         int value=in.nextInt();	       // Read an integer from the console window
         int factorial=RecursiveFactorial(value);// Calculate the factorial of value
         System.out.println("The factorial of "+value+" is "+factorial);
+        while (true){
+          System.out.println("this is a while loop, its infinite");
+        }
     }
-    private static int RecursiveFactorial(int value){
+    private static int RecursiveFactorial(int value, String test){
         int returnValue = 1;
+        String test = 10;
         if(value <= 1){
             return 1;
         }
-        returnValue = (value * RecursiveFactorial(value-1));
+        returnValue = (value * RecursiveFactorial(value-1, test), test2);
         return returnValue;
     }
     private static int IterativeFactorial(int value){
