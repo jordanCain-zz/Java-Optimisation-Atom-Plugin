@@ -6,41 +6,34 @@ from statementHolder import Statement
 from conditionHolder import Condition
 from loopHolder import Loop
 from tryCatchHolder import TryCatch
-import debugUtil
+from debugUtil import Trace
 import re
 
 #Function to read in and print the file
-def read(debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print("Starting scan")
-    fileContents = readFile(debug)
-    parent = analyseFile(fileContents, debug)
+def read(debugObj):
+    global debug
+    debug = debugObj
+    debug.writeTrace("Starting scan")
+    fileContents = readFile()
+    parent = analyseFile(fileContents)
     return parent
 
 #Function to read in the contents of a file line by line and load into a list
 #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
-def readFile(debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Read File")
+def readFile():
+    debug.writeTrace("Read File")
     fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADS2Assignment2.java"
     with open(fname) as fil:
         content = fil.readlines()
     return content
 
 #Function to iterate over all the lines of a file
-def analyseFile(content, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Analyse file")
+def analyseFile(content):
+    debug.writeTrace("Analyse file")
     #we use an iterator so we can track the line number
     currentParent = Package("SuperParent", 0)
     for i, line in enumerate(content):
-        currentParent = analyseLine(line.rstrip('\n'), currentParent, i, debug)
+        currentParent = analyseLine(line.rstrip('\n'), currentParent, i)
     return currentParent
 
 #Function called to analyse an individual line
@@ -50,86 +43,70 @@ def analyseFile(content, debug):
 #SOURCE:: https://docs.python.org/2/library/re.html ---regex
 #SOuRCE:: http://www.regexr.com/ ---more regex
 #SOURCE:: http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python ---empty line
-def analyseLine(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("AnalyseLine: " + line)
-        print ("Current parent: " + parent.getName())
+def analyseLine(line, parent, lineNo):
+    debug.writeTrace("AnalyseLine: " + line + "\nCurrent parent: " + parent.getName())
     if re.search("(package)\s.+(;)", line):
         #regex: package, whitespace, one or more chars, finally semi-colon
-        parent = packageFound(line, lineNo, debug)
+        parent = packageFound(line, lineNo)
         return parent
     elif re.search("(import)\s\w+.*(;)", line):
-        importFound(line, parent, lineNo, debug)
+        importFound(line, parent, lineNo)
     elif re.search("\w+\s(class)\s\w+\s(\{)", line):
         #regex: one or more words, whitespace, "class", whitespace, one or more words, {
-        parent = classFound(line, parent, lineNo, debug)
+        parent = classFound(line, parent, lineNo)
         return parent
     elif re.search("((public)|(private))\s.*(\().*(\))", line):
         #regex: public or private, whitespace, any number of chars, "(", any number of chars, finally ")"
-        parent = methodFound(line, parent, lineNo, debug)
+        parent = methodFound(line, parent, lineNo)
         return parent
     elif re.search("((private)|(public))\s((static)\s)?[A-z]*\s[A-z0-9]+\s*((\;)|(\=.*\;))", line):
         #regex: public or private, whitespace, possible static, word, whitespace,word,possible whitespace, semicolon or = plus chars semicolon
-        classAtributeFound(line, parent, lineNo, debug)
+        classAtributeFound(line, parent, lineNo)
     elif re.search("((if)|(else if)|(switch))\s?(\()[0-9A-z\-\=\&\|\!\^\>\<\[\]\s\(\)\.\"\'\,\+]+(\))|(else)", line):
         #regex: condition with conditional, 1 or 0 whitespace, "(", any condition, ")" or "else"
-        parent = conditionFound(line, parent, lineNo, debug)
+        parent = conditionFound(line, parent, lineNo)
         return parent
     elif re.search("((for)\s*(\().+(\)))|((while)\s*(\().*(\)))[^;]|(do)\s*\{", line):
-        parent = loopFound(line, parent, lineNo, debug)
+        parent = loopFound(line, parent, lineNo)
         return parent
     elif re.search("(try\s*\{)", line):
-        parent = tryFound(line, parent, lineNo, debug)
+        parent = tryFound(line, parent, lineNo)
         return parent
     elif re.search("(catch\s*\([A-z0-9]+\s+[A-z0-9]+\))", line):
-        catchFound(line, parent, lineNo, debug)
+        catchFound(line, parent, lineNo)
     elif ("}" in line) and (not "{" in line) and (not re.search("(catch\s*\([A-z0-9]+\s+[A-z0-9]+\))", line)):
         # '}' denotes we have left a block and need to go up a parent except for in the case of a try catch
         parent = parent.getParent()
     else:
         if line.isspace() == False:
-            statementFound(line, parent, lineNo, debug)
+            statementFound(line, parent, lineNo)
     return parent
 
 #Function called when a new package is found
-def packageFound(line, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("found package: " + line[8:-2])
+def packageFound(line, lineNo):
+    debug.writeTrace("found package: " + line[8:-2])
     newPackage = Package(line[8:-2], lineNo)
     return newPackage
 
-def importFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("found import: " + line[7:-1])
+def importFound(line, parent, lineNo):
+    debug.writeTrace("found import: " + line[7:-1])
     #Adds the import to an attribute of a package
     parent.addImport(line[7:-1])
 
 #Function called when a new class is found
-def classFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("found class: " + line)
+def classFound(line, parent, lineNo):
+    debug.writeTrace("found class: " + line)
     startIndex = (line.index("class") + 6)
-    newClass = Class(line[startIndex:-3], parent, getScope(line, debug), lineNo)
+    newClass = Class(line[startIndex:-3], parent, getScope(line), lineNo)
     parent.addChild(newClass)
     return newClass
 
 #Function called when a class atribute is found
 #TODO:: Improve the detection of differnt elements by using split(' ')
 #TODO:: Ensure we can pick up static attributes
-def classAtributeFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("found classAtrribute: " + line)
-    scope = getScope(line, debug)
+def classAtributeFound(line, parent, lineNo):
+    debug.writeTrace("found classAtrribute: " + line)
+    scope = getScope(line)
     if scope is "public":
         startIndex = 9
     elif scope is "private":
@@ -152,28 +129,22 @@ def classAtributeFound(line, parent, lineNo, debug):
 
 
 #Function called when a new method is found
-def methodFound(line, parent, lineNo,  debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("found method: " + line)
+def methodFound(line, parent, lineNo):
+    debug.writeTrace("found method: " + line)
     #Get the method name
     endIndex = line.index('(')
     startIndex = endIndex
     while (line[startIndex] != ' '):
         startIndex -= 1
-    newMethod = Method(line[startIndex:endIndex], parent, getScope(line, debug), isStatic(line, debug), lineNo)
-    newMethod.setParams(getParams(line, debug))
-    newMethod.setType(getType(line, newMethod, debug))
+    newMethod = Method(line[startIndex:endIndex], parent, getScope(line), isStatic(line), lineNo)
+    newMethod.setParams(getParams(line))
+    newMethod.setType(getType(line, newMethod))
     parent.addChild(newMethod)
     return newMethod
 
 #Function called when a new statement is found
-def statementFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Found statement: " + line)
+def statementFound(line, parent, lineNo):
+    debug.writeTrace("Found statement: " + line)
     newStatement = Statement(line, parent, lineNo)
     if type(parent) is TryCatch:
         if not parent.getCatchStatement:
@@ -185,11 +156,8 @@ def statementFound(line, parent, lineNo, debug):
 
 #Function called when a new condition is found
 #Returns the condition object as a new parent
-def conditionFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Found condition: " + line)
+def conditionFound(line, parent, lineNo):
+    debug.writeTrace("Found condition: " + line)
     #TODO:: Detect switch statements
     newCondition = Condition(line, parent, "if", lineNo)
     parent.addChild(newCondition)
@@ -197,11 +165,8 @@ def conditionFound(line, parent, lineNo, debug):
 
 #Function called when a new loop is found
 #Returns the loop object as a new parent
-def loopFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Found loop: " + line)
+def loopFound(line, parent, lineNo):
+    debug.writeTrace("Found loop: " + line)
     if re.search("((for)\s*(\().+(\)))", line):
         newLoop = Loop(line, parent, "for", lineNo)
     if re.search("((while)\s*(\().*(\)))[^;]", line):
@@ -211,28 +176,19 @@ def loopFound(line, parent, lineNo, debug):
     parent.addChild(newLoop)
     return newLoop
 
-def tryFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Found try statement: " + line)
+def tryFound(line, parent, lineNo):
+    debug.writeTrace("Found try statement: " + line)
     newTryCatch = TryCatch(line, parent, lineNo)
     parent.addChild(newTryCatch)
     return newTryCatch
 
-def catchFound(line, parent, lineNo, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Found catch statement: " + line)
+def catchFound(line, parent, lineNo):
+    debug.writeTrace("Found catch statement: " + line)
     parent.addCatchStatement(line, lineNo)
 
 #Function to determine whether a method is public or private and return it
-def getScope(line, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Get scope: " + line)
+def getScope(line):
+    debug.writeTrace("Get scope: " + line)
     #regex is slow, so use "in"
     #SOURCE:: http://stackoverflow.com/questions/4901523/whats-a-faster-operation-re-match-search-or-str-find
     if "public" in line:
@@ -242,32 +198,23 @@ def getScope(line, debug):
     return "NULL"
 
 #Function to determine whether a class attribute/method is static
-def isStatic(line, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Is static: " + line)
+def isStatic(line):
+    debug.writeTrace("Is static: " + line)
     if "static" in line:
         return True
     return False
 
 #Function to get the return type of a method
-def getType(line, newMethod, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Get type: " + line)
+def getType(line, newMethod):
+    debug.writeTrace("Get type: " + line)
     endIndex = line.index(newMethod.getName())
     startIndex = endIndex - 1
     while (line[startIndex] != ' '):
         startIndex -= 1
     return line[startIndex:endIndex]
 
-def getParams(line, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Get params: " + line)
+def getParams(line):
+    debug.writeTrace("Get params: " + line)
     startIndex = line.index('(')+1
     endIndex = line.rindex(')')
     line = line[startIndex:endIndex]
@@ -278,10 +225,6 @@ def getParams(line, debug):
     return parameters
 
 #Function to print a simple tree to console
-def printTree(parent, debug):
-    if debug >= 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        print ("Start node: ", parent.getName())
-        print ("###############################")
+def printTree(parent):
+    debug.writeTrace("Start node: ", parent.getName())
     parent.printNode()

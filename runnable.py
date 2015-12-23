@@ -5,21 +5,22 @@ sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\Gui')
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser')
 import parse
 import scan
-import debugUtil
+from debugUtil import Trace
 
 #Debug levels:
 #0 Dev trace        - produces extra log info in areas being written
-#1 User trace       - produces extra logging info
-#2 Service Trace    - Produces a stackTrace
-debugLevel = 1
+#1 User trace       - Produces logging info to a UserTrace.txt file
+#2 Service Trace    - Produces a stackTrace in StackTrace.txts
+debugLevel = 2
 
 #Run the parse and detect
 def run():
-    if debugLevel == 2:
-        debugUtil.stackTrace()
-    parent = parse.read(debugLevel)
+    if debugLevel >= 1:
+        debug = Trace(debugLevel)
+        debug.writeTrace()
+    parent = parse.read(debug)
     parent.printNode()
-    #optimisations = scan.detect(parent, debugLevel)
-    #scan.output(optimisations, debugLevel)
+    optimisations = scan.detect(parent, debug)
+    scan.output(optimisations)
 
 run()
