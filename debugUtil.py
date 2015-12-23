@@ -33,7 +33,7 @@ class Trace():
         self.formatStackTrace(len(inspect.stack())-2)
         self.stackFile.write(inspect.stack()[2][3] + " ")
         self.formatStackTrace(len(inspect.stack())-2)
-        self.stackFile.write(" " + inspect.stack()[2][1] + " : " + str(inspect.stack()[1][2]-2) + "\n")
+        self.stackFile.write(" " + inspect.stack()[2][1] + " : " + str(inspect.stack()[2][2]-2) + "\n")
 
     #Allows the method calls to be formatted in a cascading tree
     def formatStackTrace(self,count):

@@ -90,9 +90,10 @@ def getStatementParamTypes(params, method):
     debug.writeTrace("Statement params: " + str(params))
     paramTypes = []
     for param in params:
+        debug.writeTrace("Current param: " + param)
         #Check for literals?
         if '(' in param and ')' in param:
-            print ("found a function call")
+            debug.writeTrace("found a function call")
             #walk the tree to find the return type
         elif param.isdigit():
             paramTypes.append("int")
@@ -106,8 +107,7 @@ def getStatementParamTypes(params, method):
             paramTypes.append(findVariable(param.lstrip(), method))
         else:
             paramTypes.append(cleanParam(param.lstrip()))
-        if debug == 1:
-            print ("ParamTypes: " + str(paramTypes))
+        debug.writeTrace("ParamTypes: " + str(paramTypes))
     return paramTypes
 
 def cleanParam(param):
@@ -121,6 +121,8 @@ def cleanParam(param):
         operatorIndex = param.index('/')
     elif '*' in param:
         operatorIndex = param.index('*')
+    else:
+        return "Unable To Clean Param"
 
     left = param[:operatorIndex]
     right = param[operatorIndex+1:]

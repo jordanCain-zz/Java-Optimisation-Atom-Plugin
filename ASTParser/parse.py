@@ -22,7 +22,7 @@ def read(debugObj):
 #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
 def readFile():
     debug.writeTrace("Read File")
-    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADS2Assignment2.java"
+    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
     with open(fname) as fil:
         content = fil.readlines()
     return content
@@ -31,7 +31,7 @@ def readFile():
 def analyseFile(content):
     debug.writeTrace("Analyse file")
     #we use an iterator so we can track the line number
-    currentParent = Package("SuperParent", 0)
+    currentParent = Package("SuperParent", 0, debug)
     for i, line in enumerate(content):
         currentParent = analyseLine(line.rstrip('\n'), currentParent, i)
     return currentParent
@@ -85,7 +85,7 @@ def analyseLine(line, parent, lineNo):
 #Function called when a new package is found
 def packageFound(line, lineNo):
     debug.writeTrace("found package: " + line[8:-2])
-    newPackage = Package(line[8:-2], lineNo)
+    newPackage = Package(line[8:-2], lineNo, debug)
     return newPackage
 
 def importFound(line, parent, lineNo):
@@ -97,7 +97,7 @@ def importFound(line, parent, lineNo):
 def classFound(line, parent, lineNo):
     debug.writeTrace("found class: " + line)
     startIndex = (line.index("class") + 6)
-    newClass = Class(line[startIndex:-3], parent, getScope(line), lineNo)
+    newClass = Class(line[startIndex:-3], parent, getScope(line), lineNo, debug)
     parent.addChild(newClass)
     return newClass
 
@@ -136,7 +136,7 @@ def methodFound(line, parent, lineNo):
     startIndex = endIndex
     while (line[startIndex] != ' '):
         startIndex -= 1
-    newMethod = Method(line[startIndex:endIndex], parent, getScope(line), isStatic(line), lineNo)
+    newMethod = Method(line[startIndex:endIndex], parent, getScope(line), isStatic(line), lineNo, debug)
     newMethod.setParams(getParams(line))
     newMethod.setType(getType(line, newMethod))
     parent.addChild(newMethod)
@@ -145,7 +145,7 @@ def methodFound(line, parent, lineNo):
 #Function called when a new statement is found
 def statementFound(line, parent, lineNo):
     debug.writeTrace("Found statement: " + line)
-    newStatement = Statement(line, parent, lineNo)
+    newStatement = Statement(line, parent, lineNo, debug)
     if type(parent) is TryCatch:
         if not parent.getCatchStatement:
             parent.addTryChild(newStatement)
@@ -159,7 +159,7 @@ def statementFound(line, parent, lineNo):
 def conditionFound(line, parent, lineNo):
     debug.writeTrace("Found condition: " + line)
     #TODO:: Detect switch statements
-    newCondition = Condition(line, parent, "if", lineNo)
+    newCondition = Condition(line, parent, "if", lineNo, debug)
     parent.addChild(newCondition)
     return newCondition
 
@@ -168,17 +168,17 @@ def conditionFound(line, parent, lineNo):
 def loopFound(line, parent, lineNo):
     debug.writeTrace("Found loop: " + line)
     if re.search("((for)\s*(\().+(\)))", line):
-        newLoop = Loop(line, parent, "for", lineNo)
+        newLoop = Loop(line, parent, "for", lineNo, debug)
     if re.search("((while)\s*(\().*(\)))[^;]", line):
-        newLoop = Loop(line, parent, "while", lineNo)
+        newLoop = Loop(line, parent, "while", lineNo, debug)
     if re.search("(do)\s*\{", line):
-        newLoop = Loop(line, parent, "do", lineNo)
+        newLoop = Loop(line, parent, "do", lineNo, debug)
     parent.addChild(newLoop)
     return newLoop
 
 def tryFound(line, parent, lineNo):
     debug.writeTrace("Found try statement: " + line)
-    newTryCatch = TryCatch(line, parent, lineNo)
+    newTryCatch = TryCatch(line, parent, lineNo, debug)
     parent.addChild(newTryCatch)
     return newTryCatch
 

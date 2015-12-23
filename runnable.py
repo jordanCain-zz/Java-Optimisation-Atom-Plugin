@@ -19,7 +19,7 @@ def run():
         debug = Trace(debugLevel)
         debug.writeTrace()
     parent = parse.read(debug)
-    parent.printNode()
+    #parent.printNode()
     optimisations = scan.detect(parent, debug)
     scan.output(optimisations)
 
