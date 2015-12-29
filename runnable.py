@@ -15,10 +15,11 @@ debugLevel = 2
 
 #Run the parse and detect
 def run():
+    debug = Trace(debugLevel)
     if debugLevel >= 1:
-        debug = Trace(debugLevel)
         debug.writeTrace()
-    parent = parse.read(debug)
+    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3Threading.java"
+    parent = parse.read(fname, debug)
     #parent.printNode()
     optimisations = scan.detect(parent, debug)
     scan.output(optimisations)

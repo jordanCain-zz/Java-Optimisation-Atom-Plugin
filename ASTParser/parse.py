@@ -10,19 +10,18 @@ from debugUtil import Trace
 import re
 
 #Function to read in and print the file
-def read(debugObj):
+def read(fileName, debugObj):
     global debug
     debug = debugObj
     debug.writeTrace("Starting scan")
-    fileContents = readFile()
+    fileContents = readFile(fileName)
     parent = analyseFile(fileContents)
     return parent
 
 #Function to read in the contents of a file line by line and load into a list
 #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
-def readFile():
+def readFile(fname):
     debug.writeTrace("Read File")
-    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
     with open(fname) as fil:
         content = fil.readlines()
     return content
