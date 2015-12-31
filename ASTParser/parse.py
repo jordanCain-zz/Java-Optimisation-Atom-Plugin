@@ -19,7 +19,6 @@ def read(fileName, debugObj):
     return parent
 
 #Function to read in the contents of a file line by line and load into a list
-#SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
 def readFile(fname):
     debug.writeTrace("Read File")
     with open(fname) as fil:
