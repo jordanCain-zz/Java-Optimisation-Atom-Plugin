@@ -35,7 +35,7 @@ public class ADSWeek3 {
     }
     private static int IterativeFactorial(int value){
         int returnValue = 1;
-        for (int i = 0; i <= value; i++){
+        for (int i = 0; i <= 5; i++){
             returnValue = (returnValue*value);
         }
         return returnValue;

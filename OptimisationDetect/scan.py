@@ -36,13 +36,18 @@ def forLoopUnrollDetect(parent):
     for loop in loops:
         if walker.checkIfCStyleLoop(loop, debug):
             condition = loop.getName()[loop.getName().find(';')+1:loop.getName().rfind(';')].lstrip()
-            print (condition)
             condLeft, condRight = splitCondition(condition)
-            print (condLeft)
-            print (condRight)
             iterator, initTo = getConditionIterator(loop.getName())
-            print (iterator)
-            print (initTo)
+            #If the iterator is a digit we may be able to unroll
+            if initTo.isdigit():
+                print("initTo is digit")
+                #If the iterator is used in the condition its more likely
+                if iterator in condition:
+                    print("iterator is in condition")
+                    print (condLeft)
+                    print (condRight)
+                    if condLeft.lstrip().isdigit() or condRight.lstrip().isdigit():
+                        print("Found a loop to unroll!")
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console

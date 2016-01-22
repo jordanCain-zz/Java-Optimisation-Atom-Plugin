@@ -137,7 +137,7 @@ public class ADS2Assignment2 {
     }
 
     public static boolean checkNames(String[] names, String name){
-        for(int i=0;i<names.length; i++){
+        for(int i=0; i<5; i++){
             if(name.equals(names[i])){
                 //System.out.println("Checking: "+name+" against "+names[i]);
                 return false;
