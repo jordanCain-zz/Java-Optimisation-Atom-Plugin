@@ -2,7 +2,7 @@ from statementHolder import Statement
 
 #loop inherits statement
 class Loop(Statement):
-    #Loop has a special attribute, looptype(For, while, do)
+    #Loop has a special attribute, looptype(for, while, do)
     def __init__(self, name, parent, loopType, lineNo, debugObj):
         global debug
         debug = debugObj

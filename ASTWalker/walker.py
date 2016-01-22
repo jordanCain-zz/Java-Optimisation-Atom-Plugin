@@ -1,4 +1,5 @@
 import sys
+import re
 sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
 import parse
 from debugUtil import Trace
@@ -40,9 +41,31 @@ def getMethods(parent, debug):
                 debug.writeTrace("\tFound not method" + method.getName())
     return finalMethods
 
+def getForLoops(parent, debug):
+    debug.writeTrace("Get For Loops, parent: " + parent.getName())
+    methods = getMethods(parent, debug)
+    forLoops = []
+    for method in methods:
+        statements = method.getChildren()
+        for statement in statements:
+            if type(statement) is Loop:
+                if statement.getLoopType() == "for":
+                    forLoops.append(statement)
+    return forLoops
+
+def checkIfCStyleLoop(loop, debug):
+    debug.writeTrace("Check if C style for loop, returns boolean");
+    #C style for loop will have two semicolons with any characters between them
+    if re.search("\;.+\;", loop.getName()):
+        return True
+    else:
+        return False
+
+
 #Function that can be used to recursivly go through a tree and return all statements
+#parent must be a method object
 def getStatements(parent, debug):
-    debug.writeTrace("Get Statements: " + parent.getName())
+    debug.writeTrace("Get Statements, parent: " + parent.getName())
     statements = []
     if type(parent) is Statement:
         return statements.extend(parent)
