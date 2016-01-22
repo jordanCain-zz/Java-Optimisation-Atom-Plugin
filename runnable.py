@@ -23,12 +23,7 @@ def run():
     fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
     parent = parse.read(fname, debug)
     #parent.printNode()
-    #optimisations = scan.detect(parent, debug)
+    optimisations = scan.detect(parent, debug)
     #scan.output(optimisations)
-    forLoops = walker.getForLoops(parent, debug)
-    for loop in forLoops:
-        print (loop.getName())
-        if walker.checkIfCStyleLoop(loop):
-            print ("True")
 
 run()

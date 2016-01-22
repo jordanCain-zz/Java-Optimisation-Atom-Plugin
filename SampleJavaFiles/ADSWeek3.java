@@ -73,7 +73,7 @@ public class ADSWeek3 {
 
     private static int LinearSearch(int value){
         int[] data={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-        for (int i = 0; i < data.length; i++){
+        for (int i = 34; i<data.length; i++){
             if (value == data[i]){
                 return (i);
             }

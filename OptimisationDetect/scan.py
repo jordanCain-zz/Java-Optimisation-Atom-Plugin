@@ -17,8 +17,9 @@ def detect(parent, debugObj):
     global debug
     debug = debugObj
     debug.writeTrace("Detecting Optimisations, parent: " + parent.getName())
-    recursions = recursionDetect(parent)
-    return recursions
+    #recursions = recursionDetect(parent)
+    #return recursions
+    forLoopUnrollDetect(parent)
 
 #Function to print all of the optimisations
 def output(recursions):
@@ -28,10 +29,20 @@ def output(recursions):
 
 #Function that will find any occourences of a for loop that can be unrolled
 def forLoopUnrollDetect(parent):
-    if debug == 2:
-        debugUtil.stackTrace()
-    if debug == 1:
-        debugUtil.userTrace("Detect for loops to unroll")
+    debug.writeTrace("Detect for loops to unroll")
+    loops = walker.getForLoops(parent, debug)
+    #Check if loops use a constant number for the upper range
+    #E.g for(int i=0; i<=5; i++)
+    for loop in loops:
+        if walker.checkIfCStyleLoop(loop, debug):
+            condition = loop.getName()[loop.getName().find(';')+1:loop.getName().rfind(';')].lstrip()
+            print (condition)
+            condLeft, condRight = splitCondition(condition)
+            print (condLeft)
+            print (condRight)
+            iterator, initTo = getConditionIterator(loop.getName())
+            print (iterator)
+            print (initTo)
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console
@@ -41,7 +52,7 @@ def recursionDetect(parent):
     recursions = []
     #Get all the methods in the tree
     methods = walker.getMethods(parent, debug)
-    time1 = time.time()
+    time1 = time.time() #Timing metrics
     for method in methods:
         #For each method we need to analyse the statements inside it
         statements = walker.getStatements(method, debug)
@@ -75,6 +86,36 @@ def recursionDetect(parent):
         time2 = time.time()
         print ("time taken: " + str(time2 - time1))
     return recursions
+
+#Function to help for loop unroll, splits a condition at the operator index
+#Param: Loop condition as a string
+def splitCondition(condition):
+    debug.writeTrace("Split condition: " + condition)
+    if '>' in condition:
+        condLeft = condition[0:condition.find('>')].lstrip()
+        condRight = condition[condition.find('>')+1:].lstrip()
+    elif '<' in condition:
+        condLeft = condition[0:condition.find('<')].lstrip()
+        condRight = condition[condition.find('<')+1:].lstrip()
+    elif '=' in condition:
+        condLeft = condition[0:condition.find('=')].lstrip()
+        condRight = condition[condition.find('=')+1:].lstrip()
+    #if we had <= or == we have to trim an extra character off
+    if '=' in condRight:
+        condRight = condRight.replace('=','').lstrip()
+    return condLeft, condRight
+
+#Fucntion to get the iterator variable name and the intialised value
+#Param: loop decleration as string
+#TODO:: Function will fail if the iterator name contains a number
+def getConditionIterator(loop):
+    debug.writeTrace("getConditionIterator: " + loop)
+    iterator = loop[loop.find('(')+1:loop.find(';')]
+    #Strip the type off, E.g int
+    iterator = iterator[iterator.find(' '):].lstrip()
+    return iterator[:iterator.find(' ')], re.findall(r'\d+', iterator)[0]
+
+
 
 def getMethodParamTypes(params):
     debug.writeTrace("Method params: " + str(params))

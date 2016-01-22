@@ -53,7 +53,8 @@ def getForLoops(parent, debug):
                     forLoops.append(statement)
     return forLoops
 
-def checkIfCStyleLoop(loop):
+def checkIfCStyleLoop(loop, debug):
+    debug.writeTrace("Check if C style for loop, returns boolean");
     #C style for loop will have two semicolons with any characters between them
     if re.search("\;.+\;", loop.getName()):
         return True
