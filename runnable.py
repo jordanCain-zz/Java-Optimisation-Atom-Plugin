@@ -22,8 +22,7 @@ def run():
     #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
     fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
     parent = parse.read(fname, debug)
-    #parent.printNode()
-    optimisations = scan.detect(parent, debug)
-    #scan.output(optimisations)
+    recursions, loops = scan.detect(parent, debug)
+    scan.output(recursions, loops)
 
 run()
