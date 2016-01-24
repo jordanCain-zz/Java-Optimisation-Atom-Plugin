@@ -14,9 +14,12 @@ class Recursion():
         return self.method
 
     def toString(self):
-        print (self.method.toString())
-        print (self.statement.getName())
+        print ("# ", self.method.toString())
+        print ("# ", self.statement.getName())
 
 class LoopToUnroll():
     def __init__(self, loop):
         self.loop = loop
+
+    def toString(self):
+        print ("# ", self.loop.getName())

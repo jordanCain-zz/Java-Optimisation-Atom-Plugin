@@ -17,20 +17,28 @@ def detect(parent, debugObj):
     global debug
     debug = debugObj
     debug.writeTrace("Detecting Optimisations, parent: " + parent.getName())
-    #recursions = recursionDetect(parent)
-    #return recursions
-    forLoopUnrollDetect(parent)
+    recursions = recursionDetect(parent)
+    unrollables = forLoopUnrollDetect(parent)
+    return recursions, unrollables
+
 
 #Function to print all of the optimisations
-def output(recursions):
+def output(recursions, loops):
     debug.writeTrace("Output optimisations")
+    print("#####  Possible Optimisations #####")
+    print("# Recursions:")
     for recursion in recursions:
         recursion.toString()
+    print("#")
+    print("# Unrollable For Loops:")
+    for loop in loops:
+        loop.toString()
 
 #Function that will find any occourences of a for loop that can be unrolled
 def forLoopUnrollDetect(parent):
     debug.writeTrace("Detect for loops to unroll")
     loops = walker.getForLoops(parent, debug)
+    unrollableLoops = []
     #Check if loops use a constant number for the upper range
     #E.g for(int i=0; i<=5; i++)
     for loop in loops:
@@ -40,14 +48,11 @@ def forLoopUnrollDetect(parent):
             iterator, initTo = getConditionIterator(loop.getName())
             #If the iterator is a digit we may be able to unroll
             if initTo.isdigit():
-                print("initTo is digit")
                 #If the iterator is used in the condition its more likely
                 if iterator in condition:
-                    print("iterator is in condition")
-                    print (condLeft)
-                    print (condRight)
                     if condLeft.lstrip().isdigit() or condRight.lstrip().isdigit():
-                        print("Found a loop to unroll!")
+                        unrollableLoops.append(LoopToUnroll(loop))
+    return unrollableLoops
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console
@@ -57,7 +62,6 @@ def recursionDetect(parent):
     recursions = []
     #Get all the methods in the tree
     methods = walker.getMethods(parent, debug)
-    time1 = time.time() #Timing metrics
     for method in methods:
         #For each method we need to analyse the statements inside it
         statements = walker.getStatements(method, debug)
@@ -88,8 +92,6 @@ def recursionDetect(parent):
                     debug.writeTrace("Not a recursive call")
                 debug.writeTrace("Method param types: " + str(methodParamTypes))
                 debug.writeTrace("Statement param types: " + str(statementParamTypes))
-        time2 = time.time()
-        print ("time taken: " + str(time2 - time1))
     return recursions
 
 #Function to help for loop unroll, splits a condition at the operator index
