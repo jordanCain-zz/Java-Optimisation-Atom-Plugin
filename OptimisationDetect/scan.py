@@ -25,12 +25,10 @@ def detect(parent, debugObj):
 #Function to print all of the optimisations
 def output(recursions, loops):
     debug.writeTrace("Output optimisations")
-    print("#####  Possible Optimisations #####")
-    print("# Recursions:")
     for recursion in recursions:
         recursion.toString()
-    print("#")
-    print("# Unrollable For Loops:")
+    print("The JVM struggles to optimise recurssion, consider itrerative conversion")
+    print("\n###################################\n")
     for loop in loops:
         loop.toString()
 

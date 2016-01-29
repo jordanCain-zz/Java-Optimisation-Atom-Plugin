@@ -19,8 +19,7 @@ def run():
     debug = Trace(debugLevel)
     if debugLevel >= 1:
         debug.writeTrace()
-    #SOURCE:: http://stackoverflow.com/questions/18084554/why-do-i-get-a-syntaxerror-for-a-unicode-escape-in-my-file-path ---raw file path
-    fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
+    fname = sys.argv[1]     #File to analyse is passed as the first argument
     parent = parse.read(fname, debug)
     recursions, loops = scan.detect(parent, debug)
     scan.output(recursions, loops)

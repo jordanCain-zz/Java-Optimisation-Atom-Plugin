@@ -14,12 +14,20 @@ class Recursion():
         return self.method
 
     def toString(self):
-        print ("# ", self.method.toString())
-        print ("# ", self.statement.getName())
+        print ("Possible Inefficient Recursion: ")
+        print ("\tRecursive Method:")
+        print ("\t\t",self.method.toString())
+        print ("\t\tLine: ", self.method.getLineNo())
+        print ("\tRecursive call:")
+        print ("\t\t",self.statement.getName().lstrip())
+        print ("\t\t Line: ", self.statement.getLineNo())
 
 class LoopToUnroll():
     def __init__(self, loop):
         self.loop = loop
 
     def toString(self):
-        print ("# ", self.loop.getName())
+        print ("Unrollable For Loop:")
+        print ("\t",self.loop.getName().lstrip())
+        print ("\t Line:   ", self.loop.getLineNo())
+        print ("\t Method: ", self.loop.getParent().toString())

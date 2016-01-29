@@ -27,11 +27,16 @@ module.exports = TestPack =
 
   toggle: ->
     if @modalPanel.isVisible()
+      @element = @testPackView.getElement()
+      while @element.hasChildNodes()
+        @element.removeChild(@element.firstChild);
       @modalPanel.hide()
     else
       console.log 'Attempting to run some python'
+      editor = atom.workspace.getActiveTextEditor()
+      filePath = editor.getPath()
       command = 'C:\\Users\\jordan\\Documents\\GitHub\\javaParser\\runnable.py'
-      args = [' ']
+      args = [filePath]
       stdout = (output) => @stdoutFunc output
       exit = (code) -> console.log("Code magically works!!!! #{code}")
       @process = new BufferedProcess({command, args, stdout, exit})
