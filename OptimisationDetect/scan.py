@@ -50,17 +50,20 @@ def forLoopUnrollDetect(parent):
                 #If the iterator is used in the condition its more likely
                 if iterator in condition:
                     if condLeft.lstrip().isdigit() or condRight.lstrip().isdigit():
-                        unrollableLoops.append(LoopToUnroll(loop, iterator, initTo))
+                        unrollableLoops.append(LoopToUnroll(loop, iterator, initTo, condRight))
     return unrollableLoops
 
 def unrollLoop(loop):
-    loop = loop.getLoop() #Get the actual loop object
-    #if count(loop.getChildren()) < 4:
-        print("Unrolling loop")
-    #for 
-    #    for (statement in loop.getChildren())
-    #else:
-    #    print("Loop too long to unroll")
+    loopObject = loop.getLoop() #Get the actual loop object
+    if len(loopObject.getChildren()) < 4:
+        print("Unrolling loop, Replace current for loop with: ")
+        i = 0;
+        while i < int(loop.getCondRight()) - int(loop.getInitto()):
+            for statement in loopObject.getChildren():
+                statement.printNode();
+            i += 1
+    else:
+        print("Loop too long to unroll")
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console

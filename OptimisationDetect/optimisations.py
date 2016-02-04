@@ -23,10 +23,11 @@ class Recursion():
         print ("\t\t Line: ", self.statement.getLineNo())
 
 class LoopToUnroll():
-    def __init__(self, loop, iterator, initTo):
+    def __init__(self, loop, iterator, initTo, condRight):
         self.loop = loop
         self.iterator = iterator
         self.initTo = initTo
+        self.condRight = condRight
 
     def getLoop(self):
         return self.loop
@@ -36,6 +37,9 @@ class LoopToUnroll():
 
     def getInitto(self):
         return self.initTo
+
+    def getCondRight(self):
+        return self.condRight
 
     def toString(self):
         print ("Unrollable For Loop:")

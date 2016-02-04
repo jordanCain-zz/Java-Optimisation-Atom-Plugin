@@ -19,7 +19,11 @@ def run():
     debug = Trace(debugLevel)
     if debugLevel >= 1:
         debug.writeTrace()
-    fname = sys.argv[1]     #File to analyse is passed as the first argument
+    #Check if command line call or not
+    if len(sys.argv) > 1:
+        fname = sys.argv[1]     #File to analyse is passed as the first argument
+    else:
+        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
     parent = parse.read(fname, debug)
     recursions, loops = scan.detect(parent, debug)
     scan.output(recursions, loops)
