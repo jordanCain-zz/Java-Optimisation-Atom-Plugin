@@ -45,3 +45,4 @@ module.exports = TestPack =
 #SOURCE:: https://github.com/bleikamp/processing/blob/master/lib/processing-view.coffee
   stdoutFunc: (output) ->
     @testPackView.log(output)
+    atom.clipboard.write(output)

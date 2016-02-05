@@ -27,7 +27,7 @@ def output(recursions, loops):
     debug.writeTrace("Output optimisations")
     for recursion in recursions:
         recursion.toString()
-    print("The JVM struggles to optimise recurssion, consider itrerative conversion")
+    print("The JVM struggles to optimise recurssion, consider iterative conversion")
     print("\n###################################\n")
     for loop in loops:
         loop.toString()
