@@ -12,7 +12,7 @@ import walker
 #0 Dev trace        - produces extra log info in areas being written
 #1 User trace       - Produces logging info to a UserTrace.txt file
 #2 Service Trace    - Produces a stackTrace in StackTrace.txts
-debugLevel = 0
+debugLevel = 2
 
 #Run the parse and detect
 def run():
@@ -23,7 +23,7 @@ def run():
     if len(sys.argv) > 1:
         fname = sys.argv[1]     #File to analyse is passed as the first argument
     else:
-        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADSWeek3.java"
+        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADS2Assignment2.java"
     parent = parse.read(fname, debug)
     recursions, loops = scan.detect(parent, debug)
     scan.output(recursions, loops)

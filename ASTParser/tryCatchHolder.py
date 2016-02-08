@@ -7,7 +7,7 @@ class TryCatch(Statement):
         global debug
         debug = debugObj
         debug.writeTrace("TryCatch Constructor")
-        Statement.__init__(self, name, parent, lineNo)
+        Statement.__init__(self, name, parent, lineNo, debugObj)
         self.tryChildren = []
         self.catchChildren = []
 
