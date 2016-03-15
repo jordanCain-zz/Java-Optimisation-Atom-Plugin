@@ -77,3 +77,14 @@ def getStatements(parent, debug):
                 statements.append(statement)
                 statements.extend(getStatements(statement, debug))
     return statements
+
+#Helper method for testing all nodes are present
+def getNodeCount(parent):
+    print(countChildren(parent, 0))
+
+#Recursive method for getting node count
+def countChildren(parent, count):
+    if type(parent) is not Statement:
+        for child in parent.getChildren():
+            count += countChildren(child, 1)
+    return count

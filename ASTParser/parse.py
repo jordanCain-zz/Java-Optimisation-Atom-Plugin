@@ -82,8 +82,8 @@ def analyseLine(line, parent, lineNo):
 
 #Function called when a new package is found
 def packageFound(line, lineNo):
-    debug.writeTrace("found package: " + line[8:-2])
-    newPackage = Package(line[8:-2], lineNo, debug)
+    debug.writeTrace("found package: " + line[8:-1])
+    newPackage = Package(line[8:-1], lineNo, debug)
     return newPackage
 
 def importFound(line, parent, lineNo):
@@ -95,7 +95,7 @@ def importFound(line, parent, lineNo):
 def classFound(line, parent, lineNo):
     debug.writeTrace("found class: " + line)
     startIndex = (line.index("class") + 6)
-    newClass = Class(line[startIndex:-3], parent, getScope(line), lineNo, debug)
+    newClass = Class(line[startIndex:-2], parent, getScope(line), lineNo, debug)
     parent.addChild(newClass)
     return newClass
 
@@ -224,5 +224,5 @@ def getParams(line):
 
 #Function to print a simple tree to console
 def printTree(parent):
-    debug.writeTrace("Start node: ", parent.getName())
+    debug.writeTrace("Start node: " + parent.getName())
     parent.printNode()

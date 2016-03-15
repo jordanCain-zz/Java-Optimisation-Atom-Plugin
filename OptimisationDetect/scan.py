@@ -63,7 +63,7 @@ def unrollLoop(loop):
                 statement.printNode();
             i += 1
     else:
-        print("Loop too long to unroll")
+        print("Loop too long to unroll, \nconsider manually unrolling")
 
 #Function that will find any occorunces of recursion in a method
 #Params: parent is the highest level of the tree, debug will add extra output to console
