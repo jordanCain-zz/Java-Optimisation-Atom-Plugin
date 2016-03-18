@@ -23,11 +23,11 @@ def run():
     if len(sys.argv) > 1:
         fname = sys.argv[1]     #File to analyse is passed as the first argument
     else:
-        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\HelloWorld.java"
+        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADS2Assignment2.java"
     parent = parse.read(fname, debug)
-    walker.getNodeCount(parent)
-    parse.printTree(parent)
-    #recursions, loops = scan.detect(parent, debug)
-    #scan.output(recursions, loops)
+    #walker.getNodeCount(parent)
+    #parse.printTree(parent)
+    recursions, loops = scan.detect(parent, debug)
+    scan.output(recursions, loops)
 
 run()
