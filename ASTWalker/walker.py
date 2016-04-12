@@ -1,6 +1,7 @@
+# Author: Jordan Cain, 2015-16
+
 import sys
 import re
-sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
 import parse
 from debugUtil import Trace
 from classHolder import Class

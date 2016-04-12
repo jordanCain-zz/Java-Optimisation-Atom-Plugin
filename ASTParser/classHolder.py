@@ -1,3 +1,5 @@
+# Author: Jordan Cain, 2015-16
+
 from packageHolder import Package
 
 class Class:

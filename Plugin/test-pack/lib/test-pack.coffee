@@ -28,6 +28,7 @@ module.exports = TestPack =
   toggle: ->
     if @modalPanel.isVisible()
       @element = @testPackView.getElement()
+      #Clean the previous output overlay
       while @element.hasChildNodes()
         @element.removeChild(@element.firstChild);
       @modalPanel.hide()
@@ -35,7 +36,7 @@ module.exports = TestPack =
       console.log 'Attempting to run some python'
       editor = atom.workspace.getActiveTextEditor()
       filePath = editor.getPath()
-      command = 'C:\\Users\\jordan\\Documents\\GitHub\\javaParser\\runnable.py'
+      command = 'runnable.py'
       args = [filePath]
       stdout = (output) => @stdoutFunc output
       exit = (code) -> console.log("Code magically works!!!! #{code}")

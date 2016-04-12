@@ -1,3 +1,5 @@
+# Author: Jordan Cain, 2015-16
+
 from packageHolder import Package
 from classHolder import Class
 from classHolder import Attribute

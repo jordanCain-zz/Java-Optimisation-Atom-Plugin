@@ -16,7 +16,7 @@ public class ADSWeek3 {
     }
     private static void PerformFactorial(){
         Scanner in=new Scanner(System.in);	          // Create a keyboard reader
-        System.out.println("What value would you like the factorial of?");
+        System.out.println("What value would you like the factorial of ?");
         int value=in.nextInt();	       // Read an integer from the console window
         int factorial=RecursiveFactorial(value);// Calculate the factorial of value
         System.out.println("The factorial of "+value+" is "+factorial);

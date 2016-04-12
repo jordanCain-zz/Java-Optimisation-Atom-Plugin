@@ -1,10 +1,8 @@
+# Author: Jordan Cain, 2015-16
+
 import re
 import sys
 import time
-#SOURCE:: http://stackoverflow.com/questions/4383571/importing-files-from-different-folder-in-python
-sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTParser')
-sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser\ASTWalker')
-sys.path.insert(0, r'C:\Users\Jordan\Documents\GitHub\javaParser')
 import parse
 import walker
 from debugUtil import Trace
@@ -25,13 +23,19 @@ def detect(parent, debugObj):
 #Function to print all of the optimisations
 def output(recursions, loops):
     debug.writeTrace("Output optimisations")
-    for recursion in recursions:
-        recursion.toString()
-    print("The JVM struggles to optimise recurssion, consider iterative conversion")
-    print("\n###################################\n")
-    for loop in loops:
-        loop.toString()
-        unrollLoop(loop)
+    if recursions:
+        print("The JVM struggles to optimise recurssion, consider iterative conversion")
+        for recursion in recursions:
+            recursion.toString()
+        print("\n###################################\n")
+    if loops:
+        for loop in loops:
+            loop.toString()
+            unrollLoop(loop)
+    if not loops:
+        print ("No unrollable for loops")
+    if not recursions:
+        print("No recusrions")
 
 #Function that will find any occourences of a for loop that can be unrolled
 def forLoopUnrollDetect(parent):

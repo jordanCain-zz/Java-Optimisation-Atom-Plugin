@@ -1,3 +1,5 @@
+# Author: Jordan Cain, 2015-16
+
 class Package:
     def __init__(self, name, lineNo, debugObj):
         global debug
