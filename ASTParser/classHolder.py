@@ -8,6 +8,7 @@ class Class:
         global debug
         debug = debugObj
         debug.writeTrace("Class Constructor")
+        self.scope = scope
         self.name = name.rstrip('\n')
         self.parent = parent
         self.variables = []
@@ -37,7 +38,7 @@ class Class:
 
     def printNode(self):
         debug.writeTrace("Class Print Node")
-        print (self.name)
+        print (self.scope, "class", self.name, "{")
         for currentMethod in self.children:
             currentMethod.printNode()
         print ("}")
@@ -59,9 +60,9 @@ class Attribute:
         debug.writeTrace("Class Attribute get name")
         return self.name
 
-    def printNode(slef):
+    def printNode(self):
         debug.writeTrace("Class Attribute Print Node")
         if self.value is "":
-            print (self.scope + self.type + self.name + ";")
+            print (self.scope + " " + self.type + " " + self.name + ";")
         else:
-            print (self.scope + self.type + self.name + " = " + self.value + ";")
+            print (self.scope + " " + self.type + " " + self.name + " = " + self.value + ";")

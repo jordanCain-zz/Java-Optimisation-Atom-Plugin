@@ -126,6 +126,7 @@ def classAtributeFound(line, parent, lineNo):
         newAttribute = Attribute(parent, name, scope, dataType)
     else:
         newAttribute = Attribute(parent, name, scope, dataType, line[line.index('=')+2:-2])
+    parent.addChild(newAttribute)
 
 
 #Function called when a new method is found

@@ -26,7 +26,7 @@ def run():
         fname = sys.argv[1]     #File to analyse is passed as the first argument
     else:
         #Backup file for testing purposes
-        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ADS2Assignment2.java"
+        fname = r"C:\Users\jordan\Documents\GitHub\javaParser\SampleJavaFiles\ToThePowerOf.java"
     parent = parse.read(fname, debug)
     #walker.getNodeCount(parent)
     #parse.printTree(parent)

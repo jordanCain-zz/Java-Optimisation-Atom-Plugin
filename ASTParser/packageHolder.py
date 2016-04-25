@@ -32,8 +32,8 @@ class Package:
 
     def printNode(self):
         debug.writeTrace("Package PrintNode")
-        print (self.name,"\n")
+        print ("package ",self.name,";\n")
         for currentImport in self.imports:
-            print ("import ",currentImport)
+            print ("import ",currentImport,";")
         for currentClass in self.children:
             currentClass.printNode()

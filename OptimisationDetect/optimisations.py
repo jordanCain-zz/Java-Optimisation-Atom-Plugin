@@ -19,7 +19,7 @@ class Recursion():
         print ("Possible Inefficient Recursion: ")
         print ("\tRecursive Method:")
         print ("\t\t",self.method.toString())
-        print ("\t\tLine: ", self.method.getLineNo())
+        print ("\t\tLine: ", self.method.getLineNo()+1)
         print ("\tRecursive call:")
         print ("\t\t",self.statement.getName().lstrip())
         print ("\t\t Line: ", self.statement.getLineNo())
@@ -46,5 +46,5 @@ class LoopToUnroll():
     def toString(self):
         print ("Unrollable For Loop:")
         print ("\t",self.loop.getName().lstrip())
-        print ("\t Line:   ", self.loop.getLineNo())
+        print ("\t Line:   ", self.loop.getLineNo()+1)
         print ("\t Method: ", self.loop.getParent().toString())
